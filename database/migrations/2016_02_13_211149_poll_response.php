@@ -32,6 +32,6 @@ class PollResponse extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('poll_response');
     }
 }
