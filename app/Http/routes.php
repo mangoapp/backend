@@ -11,10 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
+Route::get('/', 'UserController@showWelcome');
 /*
 |--------------------------------------------------------------------------
 | Application Routes
