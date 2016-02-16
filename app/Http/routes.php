@@ -26,3 +26,9 @@ Route::get('/', 'UserController@showWelcome');
 Route::group(['middleware' => ['web']], function () {
     //
 });
+
+Route::group(['prefix' => 'v1','namespace'=>'API'], function()
+{
+	Route::post('auth', 'AuthController@login');
+	Route::post('users', 'AuthController@signUp');
+});

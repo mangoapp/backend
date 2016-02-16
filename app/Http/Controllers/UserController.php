@@ -1,12 +1,9 @@
-<?php
+<?php namespace App\Http\Controllers;
 
-namespace App\Http\Controllers;
-
-use App\User;
+use App\Models\User;
 use App\Http\Controllers\Controller;
 
 class UserController extends Controller {
-	public function showWelcome() {
-		return view('welcome');
+;		return view('welcome');
 	}
 }
