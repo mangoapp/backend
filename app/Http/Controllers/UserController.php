@@ -4,6 +4,9 @@ use App\Models\User;
 use App\Http\Controllers\Controller;
 
 class UserController extends Controller {
-;		return view('welcome');
+	public function showWelcome() {
+		$user = User::where('firstname', '=', 'Buster')->first();
+		return ($user->roles()->get()->toArray());
+		
 	}
 }

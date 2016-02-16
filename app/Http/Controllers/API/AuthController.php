@@ -32,7 +32,6 @@ class AuthController extends Controller {
 	            return compact('token');
 	        }
     	}
-    	// Probably a better way to do this
 		return response()->json(['error' => 'invalid_credentials'], 401);
     }
 
@@ -62,7 +61,7 @@ class AuthController extends Controller {
             $user->email = $request['email'];
             $user->save();
 
-            $user->postSignupActions(); // Attach roles
+            // $user->postSignupActions(); // Attach roles
 
             $roles = $user->roles();
             $token = JWTAuth::fromUser($user,['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>$user->slug()]);
