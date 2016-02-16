@@ -51,13 +51,19 @@ class User extends Authenticatable
         return $this->belongsToMany('App\Models\Section','role_user');
     }
 
-    public function postSignupActions()
-    {
-        $role_id = Role::where('name', '=', 'student')->first();
-        $role = new RoleUser;
-        $role->user_id = $this->id;
-        $role->role_id = $role_id->id;
+    /**
+     * Inserts the user into the specified section as a student
+     * @param Section $section
+     */
+    public function postSignupActions(Section $section) {
+        $studentRole = Role::where('name', '=', 'student')->first();
+        $pivot = new RoleUser;
+        $pivot->user_id = $this->id;
+        $pivot->role_id = $studentRole->id;
+        $pivot->section_id = $section->id;
+        $pivot->save();
     }
+
     public function slug() {
         return $this->firstname." ".$this->lastname." (#".$this->id.")";
     }
