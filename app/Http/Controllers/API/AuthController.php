@@ -1,14 +1,14 @@
 <?php namespace App\Http\Controllers\API;
 use App\Models\User;
-use App\Models\Role;
 use JWTAuth;
 use Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Validator;
 use Hash;
-use Mail;
+
 class AuthController extends Controller {
+
     /**
     * Authenticate a user
     *
@@ -59,6 +59,7 @@ class AuthController extends Controller {
             $user->lastname = $request['lastname'];
             $user->password = Hash::make($request['password']);
             $user->email = $request['email'];
+            $user->name = $user->firstname; //For now use firstname as username
             $user->save();
 
             // $user->postSignupActions(); // Attach roles

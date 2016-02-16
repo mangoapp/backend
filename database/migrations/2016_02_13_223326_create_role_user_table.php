@@ -27,7 +27,8 @@ class CreateRoleUserTable extends Migration
              $table->foreign('section_id')->references('id')->on('sections')
             ->onUpdate('cascade')->onDelete('cascade');
 
-            $table->primary(['user_id', 'role_id', 'section_id']);
+            //No user can have multiple roles in one section, so no repeats of one user/section pair allowed
+            $table->primary(['user_id', 'section_id']);
         });
     }
 

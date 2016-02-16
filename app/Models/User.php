@@ -24,9 +24,33 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    /**
+     * Returns all roles associated with this user across all sections
+     */
     public function roles() {
-        return $this->hasMany('App\Models\RoleUser');
+        return $this->belongsToMany('App\Models\Role');
     }
+
+    /**
+     * Returns the role associated with this user for a specific section
+     * @param Section $section
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function role(Section $section) {
+        $relation = RoleUser::where('section_id',$section->id)->where('user_id',$this->id)->first();
+        if(!$relation)
+            return null;
+        $role = Role::where('id',$relation->role_id)->first();
+        return $role;
+    }
+
+    /**
+     * Returns all the sections associated with this user, regardless of role
+     */
+    public function sections() {
+        return $this->belongsToMany('App\Models\Section','role_user');
+    }
+
     public function postSignupActions()
     {
         $role_id = Role::where('name', '=', 'student')->first();
@@ -35,6 +59,6 @@ class User extends Authenticatable
         $role->role_id = $role_id->id;
     }
     public function slug() {
-        return $this->first_name." ".$this->last_name." (#".$this->id.")";
+        return $this->firstname." ".$this->lastname." (#".$this->id.")";
     }
 }
