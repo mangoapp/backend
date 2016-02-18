@@ -29,7 +29,7 @@ class CourseController extends Controller
         //Get user who made the request
         $user = $user = JWTAuth::parseToken()->toUser();
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
+            'name' => 'required|unique:courses',
             'sectionName' => 'required',
         ]);
 
@@ -54,7 +54,7 @@ class CourseController extends Controller
             $pivot->role_id = $profRole->id;
             $pivot->save();
 
-            return $course;
+            return "success";
         }
     }
 }
