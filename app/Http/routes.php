@@ -31,7 +31,9 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
 {
 	Route::post('auth', 'AuthController@login');
     Route::post('users', 'AuthController@signUp');
+    Route::get('users/sections', 'UserController@getUserSections');
     Route::post('passwordResetRequest', 'UserController@requestPasswordReset');
     Route::post('passwordResetResponse', 'UserController@confirmPasswordReset');
     Route::post('courses', 'CourseController@createCourse');
+    Route::post('users/sections', 'CourseController@addUserToCourse');
 });

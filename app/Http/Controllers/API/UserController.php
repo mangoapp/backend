@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\API;
 
+use App\Models\Course;
 use App\Models\PasswordReset;
 use App\Models\User;
 use App\Http\Controllers\Controller;
@@ -101,5 +102,23 @@ class UserController extends Controller {
             $reset->delete();
             return "success";//fixme
         }
+    }
+
+    public function getUserSections() {
+        //Get user who made the request
+        $user = JWTAuth::parseToken()->toUser();
+        $data = array();
+        foreach($user->sections as $section) {
+            $sectionData = array(
+                "id" => $section->id,
+                "name" => $section->name,
+                "course" => array(
+                    "id" => $section->course->id,
+                    "name" => $section->course->name,
+                )
+            );
+            array_push($data,$sectionData);
+        }
+        return $data;
     }
 }
