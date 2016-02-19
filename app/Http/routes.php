@@ -36,4 +36,5 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::post('passwordResetResponse', 'UserController@confirmPasswordReset');
     Route::post('courses', 'CourseController@createCourse');
     Route::post('users/sections', 'CourseController@addUserToCourse');
+    Route::post('users/sections/accept', 'CourseController@acceptInvite'); //Route names are terrible, please fix
 });
