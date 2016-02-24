@@ -15,6 +15,10 @@ class Section extends Model {
     	return $this->hasMany('App\Models\AssignmentCategory');
     }
 
+    public function announcements() {
+        return $this->hasMany('App\Models\Announcement');
+    }
+
     public function users() {
         return $this->belongsToMany('App\Models\User','role_user');
     }

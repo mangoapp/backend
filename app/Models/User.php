@@ -52,6 +52,13 @@ class User extends Authenticatable
     }
 
     /**
+     * Returns all the announcemens posted by this user
+     */
+    public function announcements() {
+        return $this->hasMany('App\Models\Announcement');
+    }
+
+    /**
      * Inserts the user into the specified section as a student
      * @param Section $section
      */
