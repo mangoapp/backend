@@ -15,6 +15,7 @@ use App\Http\Controllers\Controller;
 use Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Validator;
+use Auth;
 
 class CourseController extends Controller
 {
@@ -32,7 +33,7 @@ class CourseController extends Controller
      */
     public function createCourse(Request $request) {
         //Get user who made the request
-        $user = JWTAuth::parseToken()->toUser();
+        $user = Auth::user();
         $validator = Validator::make($request->all(), [
             'name' => 'required|unique:courses',
             'sectionName' => 'required',
@@ -63,9 +64,40 @@ class CourseController extends Controller
         }
     }
 
+    public function createSection(Request $request) {
+        $user = Auth::user();
+        $validator = Validator::make($request->all(), [
+            'sectionName' => 'required|unique:sections,name',
+            'course_id' => 'required:exists:courses,id'
+        ]);
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+        else {
+            // INCOMPLETE
+            // NEED TO ADD ROLE SYSTEM FOR AUTHENTICATION
+
+
+            $section = new Section;
+            $section->name = $request['sectionName'];
+            $section->course_id = $request->course_id;
+            $section->save();
+
+            $pivot = new RoleUser;
+            $pivot->section_id = $section->id;
+            $pivot->user_id = $user->id;
+            $profRole = Role::where('name', '=', 'course_admin')->first();
+            $pivot->role_id = $profRole->id;
+            $pivot->save();
+
+            return "success";   
+        }
+        return "general error";
+    }
+
     public function addUserToCourse(Request $request) {
-            //Get user who made the request
-            $requestingUser = JWTAuth::parseToken()->toUser();
+		//Get user who made the request
+    	$requestingUser = Auth::user();
 
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
@@ -102,7 +134,7 @@ class CourseController extends Controller
 
     public function acceptInvite(Request $request) {
         //Get user who made the request
-        $user = JWTAuth::parseToken()->toUser();
+        $user = Auth::user();
 
         $validator = Validator::make($request->all(), [
             'token' => 'required',

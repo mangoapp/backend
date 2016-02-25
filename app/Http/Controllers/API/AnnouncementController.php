@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Validator;
+use Auth;
 
 class AnnouncementController extends Controller
 {
@@ -25,7 +26,7 @@ class AnnouncementController extends Controller
      */
     public function createAnnouncement(Request $request) {
         //Get user who made the request
-        $user = JWTAuth::parseToken()->toUser();
+        $user = Auth::user();
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'body' => 'required',
@@ -59,7 +60,7 @@ class AnnouncementController extends Controller
      */
     public function editAnnouncement(Request $request) {
         //Get user who made the request
-        $user = JWTAuth::parseToken()->toUser();
+        $user = Auth::user();
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'body' => 'required',
@@ -91,7 +92,7 @@ class AnnouncementController extends Controller
      */
     public function deleteAnnouncement(Request $request) {
         //Get user who made the request
-        $user = JWTAuth::parseToken()->toUser();
+        $user = Auth::user();
         $validator = Validator::make($request->all(), [
             'announcement_id' => 'required:exists:announcements,id',
             'sectionID' => 'required|exists:sections,id'
@@ -124,7 +125,7 @@ class AnnouncementController extends Controller
     public function getAnnouncements(Request $request) {
         // var_dump($request->section_id);
         //Get user who made the request
-        $user = JWTAuth::parseToken()->toUser();
+        $user = Auth::user();
 
         if(Section::where('id','=', $request->section_id)->count() != 1) {
             return "section doesn't exist";

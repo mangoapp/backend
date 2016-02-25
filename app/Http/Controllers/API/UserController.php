@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Validator;
+use Auth;
 
 class UserController extends Controller {
 
@@ -105,8 +106,8 @@ class UserController extends Controller {
     }
 
     public function getUserSections() {
-        //Get user who made the request
-        $user = JWTAuth::parseToken()->toUser();
+        $user = Auth::user();
+        
         $data = array();
         foreach($user->sections as $section) {
             $sectionData = array(
