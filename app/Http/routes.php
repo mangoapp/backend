@@ -38,5 +38,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::post('users/sections', 'CourseController@addUserToCourse');
     Route::post('users/sections/accept', 'CourseController@acceptInvite'); //Route names are terrible, please fix
     Route::post('announcements', 'AnnouncementController@createAnnouncement');
-    Route::get('announcements', 'AnnouncementController@getAnnouncements');
+    Route::post('announcements/edit', 'AnnouncementController@editAnnouncement');
+    Route::post('announcements/delete', 'AnnouncementController@deleteAnnouncement');
+    Route::get('announcements/{section_id}', 'AnnouncementController@getAnnouncements');
 });

@@ -55,7 +55,7 @@ class CourseController extends Controller
             $pivot = new RoleUser;
             $pivot->section_id = $section->id;
             $pivot->user_id = $user->id;
-            $profRole = Role::where('name', '=', 'prof')->first();
+            $profRole = Role::where('name', '=', 'course_admin')->first();
             $pivot->role_id = $profRole->id;
             $pivot->save();
 
