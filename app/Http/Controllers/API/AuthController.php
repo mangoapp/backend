@@ -4,6 +4,7 @@ use JWTAuth;
 use Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Mail;
 use Validator;
 use Hash;
 
@@ -67,10 +68,11 @@ class AuthController extends Controller {
             $roles = $user->roles();
             $token = JWTAuth::fromUser($user,['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>$user->slug()]);
             
-   //          Mail::send('emails.welcome', ['user' => $user], function ($message) use ($user) {
-   //  			$message->from('hello@mango.org', 'Welcome');
-   //  			$message->to($user->email);
-			// });
+             Mail::send('emails.welcome', ['firstname' => $user->firstname], function ($message) use ($user) {
+                $message->from('noreply@mango.com');
+                 $message->subject("Welcome to Mango!");
+                 $message->to($user->email);
+            });
 			
             return compact('token');
         }

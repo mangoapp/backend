@@ -1,0 +1,1 @@
+Hi {{$firstname}}! Welcome to Mango!

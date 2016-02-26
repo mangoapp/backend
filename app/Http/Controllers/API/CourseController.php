@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Log;
+use Mail;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Validator;
 use Auth;
@@ -184,11 +185,11 @@ class CourseController extends Controller
         $invite->token = str_random(100);
         $invite->save();
 
-        //FIXME: Email token back
-        //          Mail::send('emails.welcome', ['user' => $user], function ($message) use ($user) {
-        //  			$message->from('hello@mango.org', 'Welcome');
-        //  			$message->to($user->email);
-        // });
+        Mail::send('emails.classinvite', ['user' => $user, 'inviteTtoken' => $invite->token, 'course' => $section->course], function ($message) use ($user) {
+            $message->from('noreply@mango.com');
+            $message->subject("Welcome to Mango!");
+            $message->to($user->email);
+        });
         Log::debug("Class Invite Token: ".$invite->token);
         return "success";
     }

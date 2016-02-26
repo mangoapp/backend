@@ -18,7 +18,7 @@ class AnnouncementController extends Controller
     public function __construct()
     {
         //Require JWT token for all functions
-        $this->middleware("jwt.auth",['except' => ['requestPasswordReset','confirmPasswordReset']]);
+        $this->middleware("jwt.auth");
     }
 
     /**

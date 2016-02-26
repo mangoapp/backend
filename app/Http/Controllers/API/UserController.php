@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Log;
+use Mail;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Validator;
 use Auth;
@@ -50,11 +51,11 @@ class UserController extends Controller {
             $reset->token = str_random(100);
             $reset->save();
 
-            //FIXME: Email token back
-            //          Mail::send('emails.welcome', ['user' => $user], function ($message) use ($user) {
-            //  			$message->from('hello@mango.org', 'Welcome');
-            //  			$message->to($user->email);
-            // });
+            Mail::send('emails.passwordreset', ['resetToken' => $reset->token], function ($message) use ($user) {
+                $message->from('noreply@mango.com');
+                $message->subject("Welcome to Mango!");
+                $message->to($user->email);
+            });
             Log::debug("Password Reset Token: ".$reset->token);
 
             return "success";
