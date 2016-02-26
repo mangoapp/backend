@@ -38,6 +38,7 @@ class AnnouncementController extends Controller
         //Check user auth level
         $section = Section::where('id',"=",$request['sectionID'])->first();
         if(GeneralController::hasPermissions($section, 2)) {
+            $user = Auth::user();
             $announcement = new Announcement;
             $announcement->title = $request['title'];
             $announcement->body = $request['body'];

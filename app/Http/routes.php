@@ -30,16 +30,19 @@ Route::group(['middleware' => ['web']], function () {
 Route::group(['prefix' => 'v1','namespace'=>'API'], function()
 {
 	Route::post('auth', 'AuthController@login');
-    Route::post('users', 'AuthController@signUp');
-    Route::get('users/sections', 'UserController@getUserSections');
     Route::post('passwordResetRequest', 'UserController@requestPasswordReset');
     Route::post('passwordResetResponse', 'UserController@confirmPasswordReset');
+
     Route::post('courses', 'CourseController@createCourse');
-    Route::post('courses/section', 'CourseController@createSection');
+    Route::post('courses/sections', 'CourseController@createSection');
+
+    Route::post('users', 'AuthController@signUp');
+    Route::get('users/sections', 'UserController@getUserSections');
     Route::post('users/sections', 'CourseController@addUserToCourse');
     Route::post('users/sections/accept', 'CourseController@acceptInvite'); //Route names are terrible, please fix
+
     Route::post('announcements', 'AnnouncementController@createAnnouncement');
     Route::post('announcements/edit', 'AnnouncementController@editAnnouncement');
     Route::post('announcements/delete', 'AnnouncementController@deleteAnnouncement');
-    Route::get('announcements/{section_id}', 'AnnouncementController@getAnnouncements');
+    Route::get('announcements/{course_id}', 'AnnouncementController@getAnnouncements');
 });

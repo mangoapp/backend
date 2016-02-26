@@ -14,6 +14,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Log;
 use Mail;
+use Mockery\CountValidator\Exception;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Validator;
 use Auth;
@@ -37,100 +38,108 @@ class CourseController extends Controller
         $user = Auth::user();
         $validator = Validator::make($request->all(), [
             'name' => 'required|unique:courses',
-            'sectionName' => 'required',
+            'section_name' => 'required',
         ]);
 
         if ($validator->fails()) {
             return $validator->errors()->all();
-        } else {
-            $course = new Course;
-            $course->name= $request['name'];
-            $course->save();
-
-            //Create a new section
-            $section = new Section;
-            $section->name = $request['sectionName'];
-            $section->course_id = $course->id;
-            $section->save();
-
-            //Assign admin rights to creator
-            $pivot = new RoleUser;
-            $pivot->section_id = $section->id;
-            $pivot->user_id = $user->id;
-            $profRole = Role::where('name', '=', 'course_admin')->first();
-            $pivot->role_id = $profRole->id;
-            $pivot->save();
-
-            return "success";
         }
+        $course = new Course;
+        $course->name= $request['name'];
+        $course->save();
+
+        //Create a new section
+        $section = new Section;
+        $section->name = $request['section_name'];
+        $section->course_id = $course->id;
+        $section->save();
+
+        //Assign admin rights to creator
+        $pivot = new RoleUser;
+        $pivot->section_id = $section->id;
+        $pivot->user_id = $user->id;
+        $profRole = Role::where('name', '=', 'course_admin')->first();
+        $pivot->role_id = $profRole->id;
+        $pivot->save();
+
+        return "success";
     }
 
     public function createSection(Request $request) {
         $user = Auth::user();
         $validator = Validator::make($request->all(), [
-            'sectionName' => 'required|unique:sections,name',
-            'course_id' => 'required:exists:courses,id'
+            'section_name' => 'required|unique:sections,name',
+            'course_id' => 'required|exists:courses,id'
         ]);
         if ($validator->fails()) {
             return $validator->errors()->all();
         }
-        else {
-            // INCOMPLETE
-            // NEED TO ADD ROLE SYSTEM FOR AUTHENTICATION
 
 
-            $section = new Section;
-            $section->name = $request['sectionName'];
-            $section->course_id = $request->course_id;
-            $section->save();
-
-            $pivot = new RoleUser;
-            $pivot->section_id = $section->id;
-            $pivot->user_id = $user->id;
-            $profRole = Role::where('name', '=', 'course_admin')->first();
-            $pivot->role_id = $profRole->id;
-            $pivot->save();
-
-            return "success";   
+        //Get the 1st section in the course
+        $course = Course::where('id',$request['course_id'])->first();
+        if($course == null || $course->sections[0] == null){
+            return "invalid_course";
         }
-        return "general error";
+
+        //Course admins have permissions across every section, so just check the first
+        if(!GeneralController::hasPermissions($course->sections[0],4)) {
+            return "invalid_permissions";
+        }
+
+        //Create a new section for the same course
+        $section = new Section;
+        $section->name = $request['section_name'];
+        $section->course_id = $request['course_id'];
+        $section->save();
+
+
+        $pivot = new RoleUser;
+        $pivot->section_id = $section->id;
+        $pivot->user_id = $user->id;
+        $profRole = Role::where('name', '=', 'course_admin')->first();
+        $pivot->role_id = $profRole->id;
+        $pivot->save();
+
+        return "success";
     }
 
+    /**
+     * Invites the user to join the course.
+     * The user is not added to the course
+     * until they accept the invitation.
+     */
     public function addUserToCourse(Request $request) {
 		//Get user who made the request
     	$requestingUser = Auth::user();
 
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'sectionid' => 'required',
+            'email' => 'required|email|exists:users,email',
+            'sectionid' => 'required|exists:sections,id',
         ]);
 
         if ($validator->fails()) {
             return $validator->errors()->all();
         }
-        //Check that section is valid
-        $section = Section::where('id',$request['sectionid'])->get()->first();
-        if($section == null)
-            return "invalid_section";
-        //Check that email is valid
-        $userToAdd = User::where('email',$request['email'])->get()->first();
-        iF($userToAdd == null)
-            return "invalid_email";
 
-        //Check that user is not already in that section
+        $section = Section::where('id',$request['sectionid'])->get()->first();
+        $userToAdd = User::where('email',$request['email'])->get()->first();
+
+        //Check that the new user is not already in that section
         if($userToAdd->role($section) != null) {
             //User already in section
             return "user_already_added";
         }
-        //TODO: Need a better way to handle permissions by role
-        $authLevel = $requestingUser->role($section)->level;
-        if($authLevel  >= 2) {
-            $studentRole = Role::where('name', 'student')->get()->first();
-            $this->inviteUserToSection($studentRole,$section,$userToAdd);
-            return "success";
-        } else {
+
+        //Check permissions (TA or better)
+        if(!GeneralController::hasPermissions($section,2)) {
             return "invalid_permissions";
         }
+
+        //Send the new user an invitation
+        $studentRole = Role::where('name', 'student')->get()->first();
+        $this->inviteUserToSection($studentRole,$section,$userToAdd);
+        return "success";
     }
 
     public function acceptInvite(Request $request) {
@@ -154,9 +163,10 @@ class CourseController extends Controller
         //Check that user is not already in that section
         $section = Section::where('id',$invite->section_id)->get()->first();
         if($section == null) {
-            //Section doesnt exist anymore
+            //Section doesn't exist anymore
             return "invalid_section";
         }
+
         if($user->role($section) != null) {
             //User already in section
             return "user_already_added";
@@ -177,6 +187,7 @@ class CourseController extends Controller
         if($invite != null) {
             return "success";
         }
+
         //Generate new invite
         $invite = new Invite;
         $invite->user_id = $user->id;
