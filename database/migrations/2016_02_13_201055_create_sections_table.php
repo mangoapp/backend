@@ -19,6 +19,7 @@ class CreateSectionsTable extends Migration
             $table->foreign('course_id')->references('id')->on('courses')
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

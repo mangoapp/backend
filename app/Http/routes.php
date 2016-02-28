@@ -11,7 +11,6 @@
 |
 */
 
-Route::get('/', 'UserController@showWelcome');
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -23,24 +22,24 @@ Route::get('/', 'UserController@showWelcome');
 |
 */
 
-Route::group(['middleware' => ['web']], function () {
-    //
-});
 
 Route::group(['prefix' => 'v1','namespace'=>'API'], function()
 {
-	Route::post('auth', 'AuthController@login');
+    //Users & Auth
+    Route::post('auth', 'AuthController@login');
+    Route::post('users', 'AuthController@signUp');
     Route::post('passwordResetRequest', 'UserController@requestPasswordReset');
     Route::post('passwordResetResponse', 'UserController@confirmPasswordReset');
 
+    //Courses & Sections
     Route::post('courses', 'CourseController@createCourse');
     Route::post('courses/sections', 'CourseController@createSection');
-
-    Route::post('users', 'AuthController@signUp');
+    Route::delete('sections', 'CourseController@deleteSection');
     Route::get('users/sections', 'UserController@getUserSections');
     Route::post('users/sections', 'CourseController@addUserToCourse');
-    Route::post('users/sections/accept', 'CourseController@acceptInvite'); //Route names are terrible, please fix
+    Route::post('users/sections/accept', 'CourseController@acceptInvite');
 
+    //Announcements
     Route::post('announcements', 'AnnouncementController@createAnnouncement');
     Route::post('announcements/edit', 'AnnouncementController@editAnnouncement');
     Route::post('announcements/delete', 'AnnouncementController@deleteAnnouncement');

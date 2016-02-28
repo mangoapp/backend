@@ -21,10 +21,7 @@ class UserController extends Controller {
     }
 
 	public function showWelcome() {
-		$user = User::where('firstname', '=', 'Buster')->first();
-        $sections = $user->sections;
-        $roleInSection1 = $user->role($sections[1]);
-		return ($roleInSection1);
+		return view('welcome');
 	}
 
     public function requestPasswordReset(Request $request) {
@@ -114,6 +111,7 @@ class UserController extends Controller {
             $sectionData = array(
                 "id" => $section->id,
                 "name" => $section->name,
+                "role" => $user->role($section)->name,
                 "course" => array(
                     "id" => $section->course->id,
                     "name" => $section->course->name,

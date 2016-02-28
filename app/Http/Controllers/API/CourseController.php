@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Models\Announcement;
 use App\Models\Course;
 use App\Models\Invite;
 use App\Models\Role;
@@ -202,6 +203,38 @@ class CourseController extends Controller
             $message->to($user->email);
         });
         Log::debug("Class Invite Token: ".$invite->token);
+        return "success";
+    }
+
+    /**
+     * Deletes a section
+     */
+    public function deleteSection(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'section_id' => 'required:exists:sections,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+
+        $section = Section::where('id',"=",$request['section_id'])->first();
+
+        //User must be a course admin to delete a section
+        if(GeneralController::hasPermissions($section, 4) == false) {
+            return "invalid_permissions";
+        }
+
+        //Delete all roles linked to this section
+        RoleUser::where('section_id',$section->id)->delete();
+
+        //Delete all announcements linked to this section
+        Announcement::where('section_id',$section->id)->delete();
+
+        //TODO: Might be a good idea to delete grades, quizzes, etc...at this stage
+
+        //Delete the section
+        $section->delete();
         return "success";
     }
 }
