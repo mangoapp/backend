@@ -1,0 +1,1 @@
+Hi {{$user->firstname}}! Your role in {{$course->name}} has been updated to {{$newRole->name}} for the section "{{$section->name}}".

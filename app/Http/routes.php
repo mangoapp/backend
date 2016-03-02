@@ -25,6 +25,8 @@
 
 Route::group(['prefix' => 'v1','namespace'=>'API'], function()
 {
+
+
     //Users & Auth
     Route::post('auth', 'AuthController@login');
     Route::post('users', 'AuthController@signUp');
@@ -38,6 +40,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::get('users/sections', 'UserController@getUserSections');
     Route::post('users/sections', 'CourseController@addUserToCourse');
     Route::post('users/sections/accept', 'CourseController@acceptInvite');
+    Route::post('users/roles/edit',"CourseController@editRole");
 
     //Announcements
     Route::post('announcements', 'AnnouncementController@createAnnouncement');

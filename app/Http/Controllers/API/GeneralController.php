@@ -14,9 +14,20 @@ class GeneralController extends Controller {
      * part of the given section and that they have the
      * given auth level.
      */
-
     public static function hasPermissions($section, $level) {
         $user = Auth::user();
+        if($section == null || $user->role($section) == null || $user->role($section)->level < $level) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Checks the given user (not the logged in user) to
+     * make sure they are part of the given section and
+     * that they have the given auth level.
+     */
+    public static function userHasPermissions($user, $section, $level) {
         if($section == null || $user->role($section) == null || $user->role($section)->level < $level) {
             return false;
         }

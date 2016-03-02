@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use Log;
 use Mail;
 use Mockery\CountValidator\Exception;
@@ -203,6 +204,64 @@ class CourseController extends Controller
             $message->to($user->email);
         });
         Log::debug("Class Invite Token: ".$invite->token);
+        return "success";
+    }
+
+    public function editRole(Request $request) {
+
+        $validator = Validator::make($request->all(), [
+            'section_id' => 'required:exists:sections,id',
+            'user_id' => 'required:exists:users,id',
+            'role_id' => 'required:exists:roles,id'
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+        $section = Section::where('id',$request['section_id'])->first();
+        $userToChange = User::where('id',$request['user_id'])->first();
+        $newRole = Role::where('id',$request['role_id'])->first();
+
+        if(GeneralController::hasPermissions($section,4) == false) {
+            return "invalid_permissions";
+        }
+
+        //Make sure user isnt updating their own role
+        if(Auth::user() == $userToChange) {
+            return "invalid_user_self";
+        }
+
+        $result = $this->modifyUserRole($newRole,$section,$userToChange);
+        return $result;
+    }
+    /**
+     * Assigns a new role to the specified user and notifies them via email.
+     * The user must already be enrolled in the course.
+     * NOTE: This method does NOT validate, check permissions elsewhere
+     */
+    private function modifyUserRole(Role $newRole, Section $section, User $user) {
+        if(GeneralController::userHasPermissions($user,$section,1) == false)
+            return "user_not_enrolled";
+
+        $pivot = RoleUser::where('user_id',$user->id)->where('section_id',$section->id)->first();
+        $currentRole = Role::where('id',$pivot->role_id)->first();
+        //Make sure user is already in the section with a different role
+        if($currentRole == null || $currentRole ->id == $newRole->id)
+            return "identical_roles";
+
+        //Update database
+        //Eloquent does NOT like to update these 3-way pivot tables since they don't have an ID
+        //Run a manual query instead
+        $pivot->updateRole($user,$newRole,$section);
+        Log::debug("Changed role for user ".$user->email." from ".$currentRole->name." to ".$newRole->name.". ".date("Y-m-d @ H:i"));
+
+        //Email User
+        Mail::send('emails.rolechange', ['user' => $user, 'newRole' => $newRole, 'course' => $section->course, 'section' => $section], function ($message) use ($user) {
+            $message->from('noreply@mango.com');
+            $message->subject("Mango Role Changed");
+            $message->to($user->email);
+        });
+
         return "success";
     }
 
