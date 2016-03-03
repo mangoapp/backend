@@ -23,7 +23,7 @@
 */
 
 
-Route::group(['prefix' => 'v1','namespace'=>'API'], function()
+Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], function()
 {
 
 
