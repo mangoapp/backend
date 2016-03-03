@@ -14,7 +14,7 @@ Mango Backend is the repository that powers our frontend application. Setting up
 
 5. Generate a JWT secret: `php artisan jwt:generate`
 
-6. Generate an app secret: `php artisan key generate`
+6. Generate an app secret: `php artisan key:generate`
 
 7. If you are using apache, copy the following into your config file:
 ```
