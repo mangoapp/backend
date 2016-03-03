@@ -48,7 +48,7 @@ class UserController extends Controller {
             $reset->token = str_random(100);
             $reset->save();
 
-            Mail::send('emails.passwordreset', ['resetToken' => $reset->token], function ($message) use ($user) {
+            Mail::queue('emails.passwordreset', ['resetToken' => $reset->token], function ($message) use ($user) {
                 $message->from('noreply@mango.com');
                 $message->subject("Welcome to Mango!");
                 $message->to($user->email);

@@ -30,6 +30,15 @@ class CourseController extends Controller
         $this->middleware("jwt.auth");
     }
 
+    public function quickTest(){
+        $user = Auth::user();
+        Mail::queue('emails.welcome', ['user' => $user], function ($message) use ($user) {
+            $message->from('noreply@mango.com');
+            $message->subject("Welcome to Mango DEBUG!");
+            $message->to($user->email);
+        });
+        return "donezo";
+    }
     /**
      * Creates a new course and section
      * @param Request $request
@@ -198,7 +207,7 @@ class CourseController extends Controller
         $invite->token = str_random(100);
         $invite->save();
 
-        Mail::send('emails.classinvite', ['user' => $user, 'inviteTtoken' => $invite->token, 'course' => $section->course], function ($message) use ($user) {
+        Mail::queue('emails.classinvite', ['user' => $user, 'inviteTtoken' => $invite->token, 'course' => $section->course], function ($message) use ($user) {
             $message->from('noreply@mango.com');
             $message->subject("Welcome to Mango!");
             $message->to($user->email);
@@ -256,7 +265,7 @@ class CourseController extends Controller
         Log::debug("Changed role for user ".$user->email." from ".$currentRole->name." to ".$newRole->name.". ".date("Y-m-d @ H:i"));
 
         //Email User
-        Mail::send('emails.rolechange', ['user' => $user, 'newRole' => $newRole, 'course' => $section->course, 'section' => $section], function ($message) use ($user) {
+        Mail::queue('emails.rolechange', ['user' => $user, 'newRole' => $newRole, 'course' => $section->course, 'section' => $section], function ($message) use ($user) {
             $message->from('noreply@mango.com');
             $message->subject("Mango Role Changed");
             $message->to($user->email);

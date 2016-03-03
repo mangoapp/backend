@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use Illuminate\Support\Facades\Mail;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Validator;
 use Auth;
@@ -28,7 +29,7 @@ class AnnouncementController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'body' => 'required',
-            'sectionID' => 'required|exists:sections,id'
+            'section_id' => 'required|exists:sections,id'
         ]);
 
         if ($validator->fails()) {
@@ -36,19 +37,28 @@ class AnnouncementController extends Controller
         }
 
         //Check user auth level
-        $section = Section::where('id',"=",$request['sectionID'])->first();
-        if(GeneralController::hasPermissions($section, 2)) {
-            $user = Auth::user();
-            $announcement = new Announcement;
-            $announcement->title = $request['title'];
-            $announcement->body = $request['body'];
-            $announcement->section_id = $section->id;
-            $announcement->user_id = $user->id;
-            $announcement->save();
-
-            return("success");
+        $section = Section::where('id',"=",$request['section_id'])->first();
+        if(GeneralController::hasPermissions($section, 2) == false) {
+            return "invalid permissions";
         }
-        return "invalid permissions";
+        $user = Auth::user();
+        $announcement = new Announcement;
+        $announcement->title = $request['title'];
+        $announcement->body = $request['body'];
+        $announcement->section_id = $section->id;
+        $announcement->user_id = $user->id;
+        $announcement->save();
+
+        //Email all users in that section
+        $usersList = $section->users;
+        foreach($usersList as $userToSend) {
+            Mail::queue('emails.announcements', ['user' => $userToSend,'announcement' => $announcement], function ($message) use ($userToSend,$section,$announcement) {
+                $message->from('noreply@mango.com');
+                $message->subject($section->course->name.": ".$announcement->title);
+                $message->to($userToSend->email);
+            });
+        }
+        return("success");
     }
 
     /**
@@ -59,14 +69,14 @@ class AnnouncementController extends Controller
             'title' => 'required',
             'body' => 'required',
             'announcement_id' => 'required:exists:announcements,id',
-            'sectionID' => 'required|exists:sections,id'
+            'section_id' => 'required|exists:sections,id'
         ]);
 
         if ($validator->fails()) {
             return $validator->errors()->all();
         }
 
-        $section = Section::where('id',"=",$request['sectionID'])->first();
+        $section = Section::where('id',"=",$request['section_id'])->first();
         if(GeneralController::hasPermissions($section, 2)) {
             $announcement = Announcement::where('id', '=', $request['announcement_id'])->first();
             $announcement->title = $request['title'];
@@ -83,14 +93,14 @@ class AnnouncementController extends Controller
     public function deleteAnnouncement(Request $request) {
         $validator = Validator::make($request->all(), [
             'announcement_id' => 'required:exists:announcements,id',
-            'sectionID' => 'required|exists:sections,id'
+            'section_id' => 'required|exists:sections,id'
         ]);
 
         if ($validator->fails()) {
             return $validator->errors()->all();
         }
 
-        $section = Section::where('id',"=",$request['sectionID'])->first();
+        $section = Section::where('id',"=",$request['section_id'])->first();
         if(GeneralController::hasPermissions($section, 2)) {
             $announcement = Announcement::where('id', '=', $request['announcement_id'])->first();
             if($announcement) {

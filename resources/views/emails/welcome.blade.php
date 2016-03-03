@@ -1,1 +1,1 @@
-Hi {{$firstname}}! Welcome to Mango!
+Hi {{$user->firstname}}! Welcome to Mango!

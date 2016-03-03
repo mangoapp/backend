@@ -68,7 +68,7 @@ class AuthController extends Controller {
             $roles = $user->roles();
             $token = JWTAuth::fromUser($user,['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>$user->slug()]);
             
-             Mail::send('emails.welcome', ['firstname' => $user->firstname], function ($message) use ($user) {
+             Mail::queue('emails.welcome', ['user' => $user], function ($message) use ($user) {
                 $message->from('noreply@mango.com');
                  $message->subject("Welcome to Mango!");
                  $message->to($user->email);
