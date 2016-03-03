@@ -111,7 +111,10 @@ class UserController extends Controller {
             $sectionData = array(
                 "id" => $section->id,
                 "name" => $section->name,
-                "role" => $user->role($section)->name,
+                "role_id" => $user->role($section)->id,
+                "role_name" => $user->role($section)->name,
+                "role_level" => $user->role($section)->level,
+                "role_display_name" => $user->role($section)->display_name,
                 "course" => array(
                     "id" => $section->course->id,
                     "name" => $section->course->name,

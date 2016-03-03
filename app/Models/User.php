@@ -32,6 +32,38 @@ class User extends Authenticatable
     }
 
     /**
+     * Runs if you call $user->roles
+     */
+    public function getRolesAttribute() {
+        $pivots = RoleUser::where('user_id',$this->id)->get();
+        $data = array();
+        foreach($pivots as $pivot) {
+            $role = Role::where('id',$pivot->role_id)->first();
+            $section = Section::where('id',$pivot->section_id)->first();
+            $roleData = array(
+                "id" => $role->id,
+                "name" => $role->name,
+                "display_name" => $role->name,
+                "description" => $role->description,
+                "level" => $role->level,
+                "created_at" => $role->created_at,
+                "updated_at" => $role->updated_at,
+                "deleted_at" => $role->deleted_at,
+                "section" => array(
+                    "id" => $section->id,
+                    "name" => $section->name,
+                ),
+                "course" => array(
+                    "id" => $section->course->id,
+                    "name" => $section->course->name,
+                )
+            );
+            array_push($data,$roleData);
+        }
+        return $data;
+    }
+
+    /**
      * Returns the role associated with this user for a specific section
      * @param Section $section
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
