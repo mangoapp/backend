@@ -219,9 +219,9 @@ class CourseController extends Controller
     public function editRole(Request $request) {
 
         $validator = Validator::make($request->all(), [
-            'section_id' => 'required:exists:sections,id',
-            'user_id' => 'required:exists:users,id',
-            'role_id' => 'required:exists:roles,id'
+            'section_id' => 'required|exists:sections,id',
+            'user_id' => 'required|exists:users,id',
+            'role_id' => 'required|exists:roles,id'
         ]);
 
         if ($validator->fails()) {
@@ -279,7 +279,7 @@ class CourseController extends Controller
      */
     public function deleteSection(Request $request) {
         $validator = Validator::make($request->all(), [
-            'section_id' => 'required:exists:sections,id',
+            'section_id' => 'required|exists:sections,id',
         ]);
 
         if ($validator->fails()) {
@@ -303,6 +303,56 @@ class CourseController extends Controller
 
         //Delete the section
         $section->delete();
+        return "success";
+    }
+
+    /**
+     * Kick the user from a section
+     */
+    public function kickUser(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'section_id' => 'required|exists:sections,id',
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+
+        $section = Section::where('id',$request['section_id'])->first();
+        $userToKick = User::where('id',$request['user_id'])->first();
+
+        //Make sure requesting user has permissions
+        if(GeneralController::hasPermissions($section,2) == false) {
+            return "invalid_permissions";
+        }
+
+        //Make sure the kicked user is actually in the section
+        if(GeneralController::userHasPermissions($userToKick,$section,1) == false) {
+            return "user_not_in_section";
+        }
+
+        //Make sure the kicked user is not a higher auth level
+        if($userToKick->role($section)->level > Auth::user()->role($section)->level) {
+            return "invalid_permissions";
+        }
+
+        //Make sure a user isnt kicking themselves
+        if($userToKick == Auth::user()) {
+            return "cannot_kick_self";
+        }
+
+        RoleUser::where('section_id',$section->id)->where('user_id',$userToKick->id)->delete();
+
+        Log::debug("User ".Auth::user()->name." kicked user ".$userToKick->name." from section ".$section->name." in course ".$section->course->name.". ".date("Y-m-d @ H:i"));
+
+        //Email User
+        Mail::queue('emails.kicked', ['user' => $userToKick, 'section' => $section], function ($message) use ($userToKick) {
+            $message->from('noreply@mango.com');
+            $message->subject("Removed from Course");
+            $message->to($userToKick->email);
+        });
+
         return "success";
     }
 }

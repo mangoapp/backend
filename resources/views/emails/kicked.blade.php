@@ -1,0 +1,1 @@
+Hi {{$user->firstname}}! You have been removed from {{$section->course->name}}. If you believe this is a mistake, please contact a course administrator.

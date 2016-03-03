@@ -41,6 +41,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API'], function()
     Route::post('users/sections', 'CourseController@addUserToCourse');
     Route::post('users/sections/accept', 'CourseController@acceptInvite');
     Route::post('users/roles/edit',"CourseController@editRole");
+    Route::post('users/roles/kick',"CourseController@kickUser");
 
     //Announcements
     Route::post('announcements', 'AnnouncementController@createAnnouncement');
