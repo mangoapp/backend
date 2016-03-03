@@ -11,6 +11,12 @@
 |
 */
 
+// LEAVE THIS ROUTE HERE!
+Route::get('/', function () {
+    return view('welcome');
+});
+// LEAVE THIS ROUTE HERE!
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -25,8 +31,6 @@
 
 Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], function()
 {
-
-
     //Users & Auth
     Route::post('auth', 'AuthController@login');
     Route::post('users', 'AuthController@signUp');
