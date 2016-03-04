@@ -120,15 +120,17 @@ class CourseController extends Controller
     	return $section;
     }
 
+    /* TODO */
+    public function joinCourse(Request $request) {
+    	$user = Auth::user();
+    }
+
     /**
      * Invites the user to join the course.
      * The user is not added to the course
      * until they accept the invitation.
      */
     public function addUserToCourse(Request $request) {
-		//Get user who made the request
-    	$requestingUser = Auth::user();
-
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|exists:users,email',
             'sectionid' => 'required|exists:sections,id',
@@ -148,6 +150,7 @@ class CourseController extends Controller
         }
 
         //Check permissions (TA or better)
+        // TODO: Move this up
         if(!GeneralController::hasPermissions($section,2)) {
             return "invalid_permissions";
         }

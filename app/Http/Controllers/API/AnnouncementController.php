@@ -117,15 +117,16 @@ class AnnouncementController extends Controller
     /**
      * Returns a list of all announcements for a particular section
      */
-    public function getAnnouncements(Request $request, $section_id) {
+    public function getAnnouncements(Request $request) {
         if(Section::where('id','=', $request->section_id)->count() != 1) {
             return "section doesn't exist";
         }
-        $section = Section::where('id',"=", $section_id)->first();
+        
+        $section = Section::where('id',"=", $request->section_id)->first();
         if(GeneralController::hasPermissions($section, 1)) {
             $announcements = Announcement::where('section_id',$section->id)->get();
             return $announcements;
         }
-        return "invalid";
+        return "invalid permissions";
     }
 }
