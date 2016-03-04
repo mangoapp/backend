@@ -29,7 +29,9 @@ class AuthController extends Controller {
         else {
 	        if (Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
 	            $roles = Auth::user()->roles()->get()->lists('name');
-	            $token = JWTAuth::fromUser(Auth::user(),['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>Auth::user()->slug()]);
+	            // $token = JWTAuth::fromUser(Auth::user(),['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>Auth::user()->slug()]);
+                $user = Auth::user();
+                $token = JWTAuth::fromUser($user,['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>$user->slug(), 'firstname' => $user->firstname, 'lastname' => $user->lastname, 'email' => $user->email]);
 	            return compact('token');
 	        }
     	}
@@ -66,7 +68,7 @@ class AuthController extends Controller {
             // $user->postSignupActions(); // Attach roles
 
             $roles = $user->roles();
-            $token = JWTAuth::fromUser($user,['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>$user->slug()]);
+            $token = JWTAuth::fromUser($user,['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>$user->slug(), 'firstname' => $user->firstname, 'lastname' => $user->lastname, 'email' => $user->email]);
             
              Mail::queue('emails.welcome', ['user' => $user], function ($message) use ($user) {
                 $message->from('noreply@mango.com');
