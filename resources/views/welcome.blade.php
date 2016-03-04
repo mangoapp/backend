@@ -38,7 +38,7 @@
     <body>
         <div class="container">
             <div class="content">
-                <div class="title">Mango</div>
+                <div class="title">Mangó</div>
             </div>
         </div>
     </body>
