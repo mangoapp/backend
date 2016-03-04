@@ -115,6 +115,11 @@ class CourseController extends Controller
         return "success";
     }
 
+    public function showSections(Request $request) {
+    	$section = Section::where('course_id', '=', $request->course_id)->get(array('id', 'name', 'course_id'));
+    	return $section;
+    }
+
     /**
      * Invites the user to join the course.
      * The user is not added to the course
