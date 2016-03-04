@@ -115,8 +115,8 @@ class CourseController extends Controller
         return "success";
     }
 
-    public function showSections(Request $request) {
-    	$section = Section::where('course_id', '=', $request->course_id)->get(array('id', 'name', 'course_id'));
+    public function showSections(Request $request, $course_id) {
+    	$section = Section::where('course_id', '=', $course_id)->get(array('id', 'name', 'course_id'));
     	return $section;
     }
 

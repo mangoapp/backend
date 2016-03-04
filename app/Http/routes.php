@@ -47,6 +47,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('users/roles/edit',"CourseController@editRole");
     Route::post('users/roles/kick',"CourseController@kickUser");
     Route::get('courses/sections/{course_id}', 'CourseController@showSections');
+
     //Announcements
     Route::post('announcements', 'AnnouncementController@createAnnouncement');
     Route::post('announcements/edit', 'AnnouncementController@editAnnouncement');
