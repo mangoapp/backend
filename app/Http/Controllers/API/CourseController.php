@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\Announcement;
+use App\Models\AssignmentCategory;
 use App\Models\Course;
 use App\Models\Invite;
 use App\Models\Role;
@@ -64,6 +65,13 @@ class CourseController extends Controller
         $section->name = $request['section_name'];
         $section->course_id = $course->id;
         $section->save();
+
+        //Create a default grade category
+        $category = new AssignmentCategory; //FIXME
+        $category->name = "Default";
+        $category->weight = 100;
+        $category->section_id = $section->id;
+        $category->save();
 
         //Assign admin rights to creator
         $pivot = new RoleUser;

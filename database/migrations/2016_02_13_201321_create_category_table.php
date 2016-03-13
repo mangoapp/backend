@@ -12,10 +12,15 @@ class CreateCategoryTable extends Migration
      */
     public function up()
     {
-        Schema::create('category', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('weight');
             $table->string('name');
+
+            $table->integer('section_id')->unsigned();
+            $table->foreign('section_id')->references('id')->on('sections')
+                ->onUpdate('cascade')->onDelete('cascade');
+
         });
     }
 
@@ -26,6 +31,6 @@ class CreateCategoryTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('category');
+        Schema::dropIfExists('categories');
     }
 }

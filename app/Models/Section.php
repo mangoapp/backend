@@ -16,7 +16,7 @@ class Section extends Model {
     	return $this->hasMany('App\Models\Assignment');
     }
 
-    public function assignmentCategory() {
+    public function categories() {
     	return $this->hasMany('App\Models\AssignmentCategory');
     }
 

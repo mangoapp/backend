@@ -14,6 +14,7 @@ class CreateAssignmentTable extends Migration
     {
         Schema::create('assignments', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('title');
             $table->string('description');
             $table->timestamp('deadline');
             $table->boolean('filesubmission');
@@ -22,7 +23,7 @@ class CreateAssignmentTable extends Migration
                 ->onUpdate('cascade')->onDelete('cascade');
 
             $table->integer('category_id')->unsigned();
-            $table->foreign('category_id')->references('id')->on('category')
+            $table->foreign('category_id')->references('id')->on('categories')
                 ->onUpdate('cascade')->onDelete('cascade');
 
             $table->timestamps();
