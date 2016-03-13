@@ -14,10 +14,14 @@ class CreateQuizTable extends Migration
     {
         Schema::create('quiz', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamp('deadline');
-            $table->string('data'); // should be changed
+            $table->timestamp('deadline')->nullable();
+            $table->string('title');
+            $table->binary('data');
             $table->integer('section_id')->unsigned();
             $table->foreign('section_id')->references('id')->on('sections')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->integer('category_id')->unsigned();
+            $table->foreign('category_id')->references('id')->on('categories')
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });

@@ -16,7 +16,7 @@ class CreateAssignmentTable extends Migration
             $table->increments('id');
             $table->string('title');
             $table->string('description');
-            $table->timestamp('deadline');
+            $table->timestamp('deadline')->nullable();
             $table->boolean('filesubmission');
             $table->integer('section_id')->unsigned();
             $table->foreign('section_id')->references('id')->on('sections')

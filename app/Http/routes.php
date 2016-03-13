@@ -54,7 +54,10 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('announcements/delete', 'AnnouncementController@deleteAnnouncement');
     Route::get('announcements/{section_id}', 'AnnouncementController@getAnnouncements');
 
-    //Assignments
+    //Assignments and Quizzes
     Route::get('sections/{section_id}/assignments','AssignmentController@getAssignments');
     Route::post('sections/{section_id}/assignments','AssignmentController@createAssignment');
+
+    Route::get('sections/{section_id}/quizzes','QuizController@getQuizzes');
+    Route::post('sections/{section_id}/quizzes','QuizController@createQuiz');
 });
