@@ -72,10 +72,12 @@ class AssignmentController extends Controller
 
 
         //Assign deadline if specified
-        if($request->deadline != null)
-            $assignment->deadline = Carbon::createFromDate($request->deadline);
-        else
+        if($request->deadline != null) {
+            $assignment->deadline = Carbon::createFromFormat('Y-m-d H:i',$request->deadline);
+        }
+        else {
             $assignment->deadline = null;
+        }
 
         $assignment->save();
         return "success";
