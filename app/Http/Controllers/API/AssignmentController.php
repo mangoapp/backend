@@ -45,7 +45,8 @@ class AssignmentController extends Controller
             'title' => 'required',
             'description' => 'required',
             'filesubmission' => 'required|boolean',
-            'category_id' => 'required|exists:categories,id'
+            'category_id' => 'required|exists:categories,id',
+            'section_id' => 'required|exists:sections,id'
         ]);
 
         if ($validator->fails()) {

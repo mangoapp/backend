@@ -60,4 +60,6 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
 
     Route::get('sections/{section_id}/quizzes','QuizController@getQuizzes');
     Route::post('sections/{section_id}/quizzes','QuizController@createQuiz');
+    Route::post('sections/{section_id}/updateQuiz','QuizController@updateQuiz');
+    Route::post('sections/{section_id}/deleteQuiz','QuizController@deleteQuiz');
 });
