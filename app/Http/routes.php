@@ -54,14 +54,23 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('announcements/delete', 'AnnouncementController@deleteAnnouncement');
     Route::get('announcements/{section_id}', 'AnnouncementController@getAnnouncements');
 
-    //Assignments and Quizzes
+    //Assignments
     Route::get('sections/{section_id}/assignments','AssignmentController@getAssignments');
     Route::post('sections/{section_id}/assignments','AssignmentController@createAssignment');
     Route::post('sections/{section_id}/updateAssignment','AssignmentController@updateAssignment');
     Route::post('sections/{section_id}/deleteAssignment','AssignmentController@deleteAssignment');
 
+    //Quizzes
     Route::get('sections/{section_id}/quizzes','QuizController@getQuizzes');
     Route::post('sections/{section_id}/quizzes','QuizController@createQuiz');
     Route::post('sections/{section_id}/updateQuiz','QuizController@updateQuiz');
     Route::post('sections/{section_id}/deleteQuiz','QuizController@deleteQuiz');
+
+    //Grades
+    Route::get('sections/{section_id}/grades','GradeController@getSectionGrades'); //Get your grades for a section (For Students)
+    Route::get('assignments/{assignment_id}/grades','GradeController@getAssignmentGrades'); //Get all grades for assignment (For TAs)
+    Route::post('assignments/{assignment_id}/grades','GradeController@createGrade');
+    Route::post('assignments/{assignment_id}/updateGrade','GradeController@updateGrade');
+    Route::post('assignments/{assignment_id}/deleteGrade','GradeController@deleteGrade');
+
 });

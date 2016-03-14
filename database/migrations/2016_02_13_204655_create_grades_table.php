@@ -18,7 +18,7 @@ class CreateGradesTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('section_id')->unsigned();
             $table->integer('assignment_id')->unsigned();
-            $table->integer('quiz_id')->unsigned();
+            $table->integer('quiz_id')->unsigned()->nullable();
 
             $table->foreign('user_id')->references('id')->on('users')
                 ->onUpdate('cascade')->onDelete('cascade');
@@ -33,6 +33,7 @@ class CreateGradesTable extends Migration
 //                ->onUpdate('cascade')->onDelete('cascade');
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

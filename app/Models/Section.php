@@ -12,6 +12,10 @@ class Section extends Model {
     	return $this->belongsTo('App\Models\Course');
     }
 
+    public function grades() {
+        return $this->hasMany('App\Models\Grade');
+    }
+
     public function assignments() {
     	return $this->hasMany('App\Models\Assignment');
     }

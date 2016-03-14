@@ -11,4 +11,9 @@ class Assignment extends Model {
     public function category() {
     	return $this->hasOne('App\Models\AssignmentCategory','id','category_id');
     }
+
+    public function grades() {
+        return $this->hasMany('App\Models\Grade');
+    }
+
 }
