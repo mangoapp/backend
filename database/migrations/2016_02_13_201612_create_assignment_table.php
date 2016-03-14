@@ -18,6 +18,8 @@ class CreateAssignmentTable extends Migration
             $table->string('description');
             $table->timestamp('deadline')->nullable();
             $table->boolean('filesubmission');
+            $table->integer('maxScore');
+
             $table->integer('section_id')->unsigned();
             $table->foreign('section_id')->references('id')->on('sections')
                 ->onUpdate('cascade')->onDelete('cascade');
