@@ -19,6 +19,8 @@ class CreateAssignmentTable extends Migration
             $table->timestamp('deadline')->nullable();
             $table->boolean('filesubmission');
             $table->integer('maxScore');
+            $table->binary('data')->nullable();
+            $table->boolean('quiz');
 
             $table->integer('section_id')->unsigned();
             $table->foreign('section_id')->references('id')->on('sections')

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\API;
 use App\Models\Assignment;
 use App\Models\AssignmentCategory;
 use App\Models\Section;
-use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -32,7 +31,21 @@ class AssignmentController extends Controller
         if($section == null || GeneralController::hasPermissions($section,1) == false) {
             return "invalid_permissions";
         }
-        return $section->assignments;
+        //Remove solutions from assignments
+        $safeData = array();
+        $temp = 0;
+        foreach($section->assignments as $assignment) {
+            $temp++;
+            $modified = clone $assignment;
+            if($assignment->data != null) {
+                $quizData = json_decode($assignment->data);
+                $modified['data'] = "Data_Removed! Fixme"; //FIXME- Remove only the answers, not the questions
+            } else {
+                $modified['data'] = null;
+            }
+            array_push($safeData,$modified);
+        }
+        return $safeData;
     }
 
     /**
@@ -46,7 +59,9 @@ class AssignmentController extends Controller
             'description' => 'required',
             'filesubmission' => 'required|boolean',
             'category_id' => 'required|exists:categories,id',
-            'max_score' => 'required|integer'
+            'max_score' => 'required|integer',
+            'data' => 'required',
+            'quiz' => 'required|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -71,7 +86,8 @@ class AssignmentController extends Controller
         $assignment->filesubmission = $request->filesubmission;
         $assignment->section_id = $section->id;
         $assignment->category_id = $category->id;
-
+        $assignment->data = $request->data;
+        $assignment->quiz = $request->quiz;
 
         //Assign deadline if specified
         if($request->has('deadline')) {
@@ -98,7 +114,9 @@ class AssignmentController extends Controller
             'description' => 'required',
             'filesubmission' => 'required|boolean',
             'category_id' => 'required|exists:categories,id',
-            'max_score' => 'required|integer'
+            'max_score' => 'required|integer',
+            'data' => 'required',
+            'quiz' => 'required|boolean',
         ]);
 
         if ($validator->fails()) {
@@ -129,6 +147,8 @@ class AssignmentController extends Controller
         $assignment->filesubmission = $request->filesubmission;
         $assignment->section_id = $section->id;
         $assignment->category_id = $category->id;
+        $assignment->data = $request->data;
+        $assignment->quiz = $request->quiz;
 
         //Assign deadline if specified
         if($request->has('deadline')) {

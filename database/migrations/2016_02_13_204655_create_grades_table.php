@@ -29,9 +29,6 @@ class CreateGradesTable extends Migration
              $table->foreign('assignment_id')->references('id')->on('assignments')
                  ->onUpdate('cascade')->onDelete('cascade');
 
-//            $table->foreign('quiz_id')->references('id')->on('quizzes')
-//                ->onUpdate('cascade')->onDelete('cascade');
-
             $table->timestamps();
             $table->softDeletes();
         });
