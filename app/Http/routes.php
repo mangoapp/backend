@@ -67,4 +67,12 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('assignments/{assignment_id}/updateGrade','GradeController@updateGrade');
     Route::post('assignments/{assignment_id}/deleteGrade','GradeController@deleteGrade');
 
+    //Category
+    Route::get('sections/{section_id}/categories','CategoryController@getSectionCategories'); //Get all categories in a section
+    Route::get('sections/{section_id}/categories/{category_id}/assignments','CategoryController@getCategoryAssignments'); //Get all assignments in a category
+    Route::post('sections/{section_id}/categories','CategoryController@createCategory');
+    Route::post('sections/{section_id}/updateCategory','CategoryController@updateCategory');
+    Route::post('sections/{section_id}/deleteCategory','CategoryController@deleteCategory');
+
+
 });

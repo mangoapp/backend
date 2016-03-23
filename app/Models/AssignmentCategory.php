@@ -10,7 +10,8 @@ class AssignmentCategory extends Model {
         return $this->belongsTo('App\Models\Section');
     }
 
-    public function assignment() {
-    	return $this->belongsTo('App\Models\Assignment');
+    public function assignments() {
+    	return $this->hasMany('App\Models\Assignment','category_id','id');
     }
+
 }

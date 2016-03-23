@@ -16,11 +16,13 @@ class CreateCategoryTable extends Migration
             $table->increments('id');
             $table->integer('weight');
             $table->string('name');
+            $table->boolean('default');
 
             $table->integer('section_id')->unsigned();
             $table->foreign('section_id')->references('id')->on('sections')
                 ->onUpdate('cascade')->onDelete('cascade');
 
+            $table->timestamps();
         });
     }
 

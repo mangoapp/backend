@@ -67,10 +67,11 @@ class CourseController extends Controller
         $section->save();
 
         //Create a default grade category
-        $category = new AssignmentCategory; //FIXME
+        $category = new AssignmentCategory;
         $category->name = "Default";
-        $category->weight = 100;
+        $category->weight = 0;
         $category->section_id = $section->id;
+        $category->default = true;
         $category->save();
 
         //Assign admin rights to creator
