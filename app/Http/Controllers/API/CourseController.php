@@ -372,4 +372,14 @@ class CourseController extends Controller
 
         return "success";
     }
+
+    /**
+     * Lists all courses in the database
+     * @param Request $request
+     * @return string
+     */
+    public function showAll() {
+        $courses = Course::all(array('id', 'name'));
+        return $courses;
+    }
 }

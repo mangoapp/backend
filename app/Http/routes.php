@@ -38,6 +38,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('passwordResetResponse', 'UserController@confirmPasswordReset');
 
     //Courses & Sections
+    Route::get('allcourses', 'CourseController@showAll');
     Route::post('courses', 'CourseController@createCourse');
     Route::post('courses/sections', 'CourseController@createSection');
     Route::delete('sections', 'CourseController@deleteSection');
