@@ -10,4 +10,7 @@ class Post extends Model
 	public function thread() {
     	return $this->belongsTo('App\Models\Thread');
     }
+    public function user() {
+    	return $this->belongsTo('App\Models\User');
+    }
 }

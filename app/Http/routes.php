@@ -76,5 +76,9 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('sections/{section_id}/updateCategory','CategoryController@updateCategory');
     Route::post('sections/{section_id}/deleteCategory','CategoryController@deleteCategory');
 
+    //Forum
+    // lol urls
+    Route::get('courses/{section_id}/threads', 'ForumController@allThreads');
+    Route::get('courses/{section_id}/threads/{thread_id}/posts', 'ForumController@getPosts');
 
 });
