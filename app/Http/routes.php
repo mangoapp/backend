@@ -78,15 +78,15 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
 
     //Forum
     // lol urls
-    Route::get('courses/{section_id}/threads', 'ForumController@allThreads');
-    Route::post('courses/threads', 'ForumController@createThread');
-    Route::post('courses/threads/update', 'ForumController@updateThread');
-    Route::post('courses/threads/delete', 'ForumController@deleteThread');
+    Route::get('forum/{section_id}/threads', 'ForumController@allThreads');
+    Route::get('forum/{section_id}/threads/{thread_id}/posts', 'ForumController@getPosts');
+    
+    Route::post('forum/threads', 'ForumController@createThread');
+    Route::post('forum/threads/update', 'ForumController@updateThread');
+    Route::post('forum/threads/delete', 'ForumController@deleteThread');
 
-    Route::post('courses/posts', 'ForumController@createPost');
-    Route::post('courses/posts/update', 'ForumController@updatePost');
-    Route::post('courses/posts/delete', 'ForumController@deletePost');
-
-    Route::get('courses/{section_id}/threads/{thread_id}/posts', 'ForumController@getPosts');
+    Route::post('forum/posts', 'ForumController@createPost');
+    Route::post('forum/posts/update', 'ForumController@updatePost');
+    Route::post('forum/posts/delete', 'ForumController@deletePost');
 
 });
