@@ -84,6 +84,8 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('forum/threads', 'ForumController@createThread');
     Route::post('forum/threads/update', 'ForumController@updateThread');
     Route::post('forum/threads/delete', 'ForumController@deleteThread');
+    Route::post('forum/threads/lock', 'ForumController@lockThread');
+    Route::post('forum/threads/unlock', 'ForumController@unlockThread');
 
     Route::post('forum/posts', 'ForumController@createPost');
     Route::post('forum/posts/update', 'ForumController@updatePost');

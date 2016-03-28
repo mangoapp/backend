@@ -134,19 +134,19 @@ class CourseController extends Controller
     public function joinCourse(Request $request) {
     	$user = Auth::user();
         $validator = Validator::make($request->all(), [
-            'section' => 'required|exists:sections,id',
+            'section_id' => 'required|exists:sections,id',
         ]);
         if ($validator->fails()) {
             return $validator->errors()->all();
         }
-        $section = Section::where('id', '=', $request->section)->first();
+        $section = Section::where('id', '=', $request->section_id)->first();
         if($user->role($section) != null) {
             //User already in section
             return "user_already_added";
         }
         $studentRole = Role::where('name', 'student')->first();
         $pivot = new RoleUser;
-        $pivot->section_id = $request->section;
+        $pivot->section_id = $request->section_id;
         $pivot->user_id = $user->id;
         $pivot->role_id = $studentRole->id;
         $pivot->save();

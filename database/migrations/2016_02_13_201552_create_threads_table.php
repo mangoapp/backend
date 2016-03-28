@@ -27,6 +27,7 @@ class CreateThreadsTable extends Migration
 
             $table->boolean('anonymous');
             $table->boolean('sticky');
+            $table->boolean('locked');
 
             $table->timestamps();
         });
