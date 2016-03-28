@@ -40,7 +40,7 @@ class ForumController extends Controller {
         if(GeneralController::hasPermissions($section, 1) == false) {
             return "invalid permissions";
         }
-        $thread = Thread::with('posts.user')->find($request->thread_id);
+        $thread = Thread::with('posts.user.roles')->find($request->thread_id);
         return $thread;
     }
     public function createThread(Request $request) {
