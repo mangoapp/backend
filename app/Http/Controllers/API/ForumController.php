@@ -45,7 +45,7 @@ class ForumController extends Controller {
     }
     public function createThread(Request $request) {
         $validator = Validator::make($request->all(), [
-            'section' => 'required|exists:sections,id',
+            'section_id' => 'required|exists:sections,id',
             'title' => 'required',
             'body' => 'required',
             'anonymous' => 'required|integer',
@@ -76,7 +76,8 @@ class ForumController extends Controller {
     }
     public function updateThread(Request $request) {
         $validator = Validator::make($request->all(), [
-            'section' => 'required|exists:sections,id',
+            'section_id' => 'required|exists:sections,id',
+            'thread_id' => 'required|exists:threads,id',
             'title' => 'required',
             'body' => 'required',
             'anonymous' => 'required|integer',
@@ -144,4 +145,98 @@ class ForumController extends Controller {
 	    	return "no such thread";
 	    }    	
     }
+
+    public function createPost(Request $request) {
+       $validator = Validator::make($request->all(), [
+            'section_id' => 'required|exists:sections,id',
+            'thread_id' => 'required|exists:threads,id',
+            'body' => 'required',
+            'anonymous' => 'required|integer',
+            'reply_id' => 'integer',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+        $user = Auth::user();
+        $section = Section::find($request->section_id);
+        if(GeneralController::hasPermissions($section, 1) == false) {
+            return "invalid permissions";
+        }
+
+        $post = new Post;
+        $post->body = $request->body;
+        $post->user_id = $user->id;
+        $post->thread_id = $request->thread_id;
+        $post->anonymous = $request->anonymous;
+        $post->save();
+
+        return "success";  
+    }
+
+    public function updatePost(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'section_id' => 'required|exists:sections,id',
+            'post_id' => 'required|exists:posts,id',
+            'body' => 'required',
+            'anonymous' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+        $user = Auth::user();
+        $section = Section::find($request->section_id);
+        if(GeneralController::hasPermissions($section, 1) == false) {
+            return "invalid permissions";
+        }
+
+        $post = Post::where('id', '=', $request->post_id);
+
+        // lol
+        if($post->count()) {
+            $post = $post->first();
+            if($post->user_id != $user->id && GeneralController::hasPermissions($section, 2) == false) {
+                return "invalid permissions (2)";
+            }
+            $post->body = $request->body;
+            $post->anonymous = $request->anonymous;
+            $post->save();
+            return "success";
+        }
+        else {
+            return "no such post";
+        }    
+    }
+
+    public function deletePost(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'section_id' => 'required|exists:sections,id',
+            'post_id' => 'required|exists:posts,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+        $user = Auth::user();
+        $section = Section::find($request->section_id);
+        if(GeneralController::hasPermissions($section, 1) == false) {
+            return "invalid permissions";
+        }
+
+        $post = Post::where('id', '=', $request->post_id);
+
+        if($post->count()) {
+            $post = $post->first();
+            if($post->user_id != $user->id && GeneralController::hasPermissions($section, 2) == false) {
+                return "invalid permissions (2)";
+            }
+            $post->delete();
+            return "success";
+        }
+        else {
+            return "no such post";
+        }       
+    }
+
 }
