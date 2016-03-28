@@ -79,6 +79,9 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     //Forum
     // lol urls
     Route::get('courses/{section_id}/threads', 'ForumController@allThreads');
+    Route::post('courses/{section_id}/threads', 'ForumController@createThread');
+    Route::post('courses/threads/delete', 'ForumController@deleteThread');
+    Route::post('courses/{section_id}/threads/update/{thread_id}', 'ForumController@updateThread');
     Route::get('courses/{section_id}/threads/{thread_id}/posts', 'ForumController@getPosts');
 
 });

@@ -124,6 +124,7 @@ class CourseController extends Controller
         return "success";
     }
 
+    // inconsistent request params, must be changed in the future
     public function showSections(Request $request, $course_id) {
     	$section = Section::where('course_id', '=', $course_id)->get(array('id', 'name', 'course_id'));
     	return $section;
@@ -135,6 +136,9 @@ class CourseController extends Controller
         $validator = Validator::make($request->all(), [
             'section' => 'required|exists:sections,id',
         ]);
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
         $section = Section::where('id', '=', $request->section)->first();
         if($user->role($section) != null) {
             //User already in section
