@@ -58,6 +58,8 @@ class CourseController extends Controller
         }
         $course = new Course;
         $course->name= $request['name'];
+        $course->category = "DEFAULT"; //FIXME
+        $course->active = 1;
         $course->save();
 
         //Create a new section
@@ -398,7 +400,7 @@ class CourseController extends Controller
      * @return string
      */
     public function showAll() {
-        $courses = Course::all(array('id', 'name'));
+        $courses = Course::all();
         return $courses;
     }
 }
