@@ -40,7 +40,7 @@ class ForumController extends Controller {
         if(GeneralController::hasPermissions($section, 1) == false) {
             return "invalid permissions";
         }
-        $thread = Thread::with('posts.user.roles')->find($request->thread_id);
+        $thread = Thread::with('posts.user.roles')->with('posts.likes')->find($request->thread_id);
         return $thread;
     }
     public function createThread(Request $request) {
@@ -296,4 +296,62 @@ class ForumController extends Controller {
         }       
     }
 
+    public function likePost() {
+        $validator = Validator::make($request->all(), [
+            'section_id' => 'required|exists:sections,id',
+            'post_id' => 'required|exists:posts,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+        $user = Auth::user();
+        $section = Section::find($request->section_id);
+        if(GeneralController::hasPermissions($section, 1) == false) {
+            return "invalid permissions";
+        }
+
+        $post = Post::where('id', '=', $request->post_id);
+        $like = Like::where('user_id', '=', $user->id)->where('post_id', '=', $post->id);
+        if($like->count()) {
+            $like = $like->first();
+        }
+        else {
+            $like = new Like;
+        }
+        $like->user_id = $user->id;
+        $like->post_id = $post->id;
+        $like->vote = 1;
+        $like->save();
+        return "success";
+    }
+    public function unlikePost() {
+        $validator = Validator::make($request->all(), [
+            'section_id' => 'required|exists:sections,id',
+            'post_id' => 'required|exists:posts,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+        $user = Auth::user();
+        $section = Section::find($request->section_id);
+        if(GeneralController::hasPermissions($section, 1) == false) {
+            return "invalid permissions";
+        }
+
+        $post = Post::where('id', '=', $request->post_id);
+        $like = Like::where('user_id', '=', $user->id)->where('post_id', '=', $post->id);
+        if($like->count()) {
+            $like = $like->first();
+        }
+        else {
+            $like = new Like;
+        }
+        $like->user_id = $user->id;
+        $like->post_id = $post->id;
+        $like->vote = 0;
+        $like->save();
+        return "success";
+    }
 }

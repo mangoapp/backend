@@ -91,4 +91,6 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('forum/posts/update', 'ForumController@updatePost');
     Route::post('forum/posts/delete', 'ForumController@deletePost');
 
+    Route::post('forum/like', 'ForumController@likePost');
+    Route::post('forum/unlike', 'ForumController@unlikePost');
 });
