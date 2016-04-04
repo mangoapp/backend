@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CategoryTableSeeder::class);
         $this->call(AssignmentTableSeeder::class);
         $this->call(GradeTableSeeder::class);
+        $this->call(TypesTableSeeder::class);
 
     }
 }
