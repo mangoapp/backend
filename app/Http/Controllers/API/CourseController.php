@@ -51,6 +51,7 @@ class CourseController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|unique:courses',
             'section_name' => 'required',
+            'type' => 'required|exists:types,name'
         ]);
 
         if ($validator->fails()) {
@@ -58,7 +59,7 @@ class CourseController extends Controller
         }
         $course = new Course;
         $course->name= $request['name'];
-        $course->category = "DEFAULT"; //FIXME
+        $course->type = $request['type'];
         $course->active = 1;
         $course->save();
 
