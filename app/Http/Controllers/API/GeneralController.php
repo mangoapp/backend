@@ -1,6 +1,8 @@
 <?php namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use Auth;
+use Log;
 
 /**
  * Class GeneralController

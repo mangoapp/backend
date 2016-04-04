@@ -41,7 +41,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::get('allcourses', 'CourseController@showAll');
     Route::post('courses', 'CourseController@createCourse');
     Route::post('courses/sections', 'CourseController@createSection');
-    Route::delete('sections', 'CourseController@deleteSection');
+    Route::post('sections', 'CourseController@deleteSection');
     Route::get('users/sections', 'UserController@getUserSections');
     Route::post('users/sections', 'CourseController@addUserToCourse');
     Route::post('users/sections/accept', 'CourseController@acceptInvite');
@@ -75,6 +75,11 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('sections/{section_id}/categories','CategoryController@createCategory');
     Route::post('sections/{section_id}/updateCategory','CategoryController@updateCategory');
     Route::post('sections/{section_id}/deleteCategory','CategoryController@deleteCategory');
+
+    //Notifications
+    Route::get('notifications','NotificationController@getNotifications');
+    Route::post('notifications','NotificationController@markNotificationRead');
+
 
     //Forum
     // lol urls

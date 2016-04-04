@@ -100,6 +100,9 @@ class GradeController extends Controller
         $grade->updated_at = Carbon::now();
 
         $grade->save();
+
+        NotificationController::sendNotification($userToGrade,$section,"Assignment Graded","Your assignment '".$grade->assignment->title."' has been graded.");
+
         return "success";
     }
 

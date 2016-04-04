@@ -52,6 +52,7 @@ class AnnouncementController extends Controller
         //Email all users in that section
         $usersList = $section->users;
         foreach($usersList as $userToSend) {
+            NotificationController::sendNotification($userToSend,$section,$announcement->title,"An instructor has made an announcement in ".$section->course->name);
             Mail::queue('emails.announcements', ['user' => $userToSend,'announcement' => $announcement], function ($message) use ($userToSend,$section,$announcement) {
                 $message->from('noreply@mango.com');
                 $message->subject($section->course->name.": ".$announcement->title);

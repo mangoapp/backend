@@ -91,6 +91,13 @@ class User extends Authenticatable
     }
 
     /**
+     * Returns all the notifications for this user
+     */
+    public function notifications() {
+        return $this->hasMany('App\Models\Notification');
+    }
+
+    /**
      * Inserts the user into the specified section as a student
      * @param Section $section
      */
