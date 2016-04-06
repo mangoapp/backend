@@ -396,6 +396,29 @@ class CourseController extends Controller
     }
 
     /**
+     * Returns all users in a section
+     */
+    public function getSectionUsers(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'section_id' => 'required|exists:sections,id',
+        ]);
+        $section = Section::where('id',$request->section_id)->first();
+        //Course admins have permissions across every section, so just check the first
+        if(!GeneralController::hasPermissions($section,2)) {
+            return "invalid_permissions";
+        }
+        $usersList = $section->users;
+        $studentsList = array();
+        foreach($usersList as $user) {
+            if($user->role($section) != null && $user->role($section)->level == 1) {
+                array_push($studentsList,$user);
+            }
+        }
+
+        return $studentsList;
+    }
+
+    /**
      * Lists all courses in the database
      * @param Request $request
      * @return string
