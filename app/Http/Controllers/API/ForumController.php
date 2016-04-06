@@ -49,7 +49,7 @@ class ForumController extends Controller {
 		return Thread::with(
 		 	['posts' => function($query) {
 		 		$query->orderBy('created_at', 'desc');
-		 	},'posts.user.roles']
+		 	},'posts.user.roles', 'posts.likes']
 		)->with('user')->orderBy('created_at', 'asc')->find($request->thread_id);
         // return $thread;
     }
