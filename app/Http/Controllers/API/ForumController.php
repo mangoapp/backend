@@ -45,12 +45,12 @@ class ForumController extends Controller {
         if(GeneralController::hasPermissions($section, 1) == false) {
             return "invalid permissions";
         }
-        $thread = Thread::with('posts.user.roles')->with('posts.likes')->find($request->thread_id);
+        // $thread = Thread::with('posts.user.roles')->with('posts.likes')->find($request->thread_id);
 		return Thread::with(
 		 	['posts' => function($query) {
 		 		$query->orderBy('created_at', 'desc');
 		 	},'posts.user.roles']
-		)->orderBy('created_at', 'asc')->find($request->thread_id);
+		)->with('user')->orderBy('created_at', 'asc')->find($request->thread_id);
         // return $thread;
     }
     public function createThread(Request $request) {
