@@ -29,7 +29,12 @@ class ForumController extends Controller {
         if(GeneralController::hasPermissions($section, 1) == false) {
             return "invalid permissions";
         }
-        return Course::with("threads.user")->find($section->course->id);
+        // return Course::with("threads.user")->orderBy('created_at', 'asc')->find($section->course->id);
+		return Course::with(
+		 	['threads' => function($query) {
+		 		$query->orderBy('created_at', 'asc');
+		 	},'threads.user']
+		)->orderBy('created_at', 'asc')->find($section->course->id);
     }
     public function getPosts(Request $request) {
         $section = Section::find($request->section_id);
@@ -41,7 +46,12 @@ class ForumController extends Controller {
             return "invalid permissions";
         }
         $thread = Thread::with('posts.user.roles')->with('posts.likes')->find($request->thread_id);
-        return $thread;
+		return Thread::with(
+		 	['posts' => function($query) {
+		 		$query->orderBy('created_at', 'desc');
+		 	},'posts.user.roles']
+		)->orderBy('created_at', 'asc')->find($request->thread_id);
+        // return $thread;
     }
     public function createThread(Request $request) {
         $validator = Validator::make($request->all(), [
