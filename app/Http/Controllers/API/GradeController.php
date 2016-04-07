@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\Assignment;
+use App\Models\AssignmentCategory;
 use App\Models\Grade;
 use App\Models\Section;
 use App\Models\User;
@@ -186,4 +187,68 @@ class GradeController extends Controller
         return "success";
     }
 
+    public function getStudentAverage(Request $request) {
+        $section = Section::where('id',$request->section_id)->first();
+        if($section == null) {
+            return "invalid_section_id";
+        }
+
+        $student = User::where('id',$request->user_id)->first();
+        if($student == null) {
+            return "invalid_user_id";
+        }
+
+        if(GeneralController::hasPermissions($section,2) == false) {
+            return "invalid_permissions";
+        }
+        if(GeneralController::userHasPermissions($student,$section,1) == false) {
+            return "user_not_in_section";
+        }
+
+        return $this->calculateWeightedAverage($student,$section);
+    }
+    /**
+     * Returns the current weighted average of a student in a section
+     * @param User $user
+     * @param Section $section
+     */
+    public function calculateWeightedAverage(User $user, Section $section) {
+
+        $categoriesInSection = AssignmentCategory::where('section_id',$section->id)->get();
+        $weightArray = array();
+        $totalWeight = 0;
+        foreach($categoriesInSection as $category) {
+            $maxCategoryPoints = 0;
+            $earnedCategoryPoints = 0;
+
+            $assignmentsInCategory = Assignment::where('section_id',$section->id)->where('category_id',$category->id)->get();
+            foreach($assignmentsInCategory as $assignment) {
+                $userGrade = Grade::where('assignment_id',$assignment->id)->where('user_id',$user->id)->first();
+                if($userGrade != null) {
+                    $maxCategoryPoints += $assignment->maxScore;
+                    $earnedCategoryPoints += $userGrade->score;
+                } else {
+                    //This assignment is not graded yet
+                }
+            };
+            if($maxCategoryPoints > 0) {
+                $categoryPercentage = ($earnedCategoryPoints/$maxCategoryPoints)*100;
+                array_push($weightArray,array('percentage' => $categoryPercentage, 'weight' => $category->weight));
+                $totalWeight += $category->weight;
+            }
+        }
+
+        $finalGrade = 0;
+        if($totalWeight == 0) {
+            foreach($weightArray as $weightedCateogry) {
+                $finalGrade += ($weightedCateogry['percentage']);
+            }
+        } else {
+            foreach($weightArray as $weightedCateogry) {
+                $relativeWeight = $weightedCateogry['weight']/$totalWeight;
+                $finalGrade += ($weightedCateogry['percentage']*$relativeWeight);
+            }
+        }
+        dd($finalGrade);
+    }
 }
