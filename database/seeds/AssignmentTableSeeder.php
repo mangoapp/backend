@@ -26,7 +26,7 @@ class AssignmentTableSeeder extends Seeder
             "c",
             "d"
          ],
-         "correctAnswer":"b"
+         "correctAnswer":1
       },
       {
       "question": "string2",
@@ -36,7 +36,7 @@ class AssignmentTableSeeder extends Seeder
             "c",
             "d"
          ],
-         "correctAnswer":"b"
+         "correctAnswer":1
       },
       {
       "question": "string3",
@@ -46,7 +46,7 @@ class AssignmentTableSeeder extends Seeder
             "c",
             "d"
          ],
-         "correctAnswer":"c"
+         "correctAnswer":2
       }
 ]', 'title' => 'First Quiz', 'description' => 'Make sure you Pass!', 'filesubmission' => 0, 'maxScore' => 125, 'created_at' => new DateTime(), 'updated_at' => new DateTime()],
         );
