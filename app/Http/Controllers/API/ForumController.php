@@ -362,6 +362,33 @@ class ForumController extends Controller {
         }       
     }
 
+    public function getNumLikes(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'section_id' => 'required|exists:sections,id',
+            'post_id' => 'required|exists:posts,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+        $user = Auth::user();
+        $section = Section::find($request->section_id);
+        if(GeneralController::hasPermissions($section, 1) == false) {
+            return "invalid permissions";
+        }
+
+        $post = Post::where('id', $request->post_id)->first();
+        if($post == null) {
+            return "unknown_post";
+        }
+        $allLikes = Like::where('user_id', $user->id)->where('post_id',$post->id)->get();
+        $score = 0;
+        foreach($allLikes as $like) {
+            $score += $like->vote;
+        }
+        return $score;
+    }
+
     public function likePost(Request $request) {
         $validator = Validator::make($request->all(), [
             'section_id' => 'required|exists:sections,id',

@@ -109,4 +109,5 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
 
     Route::post('forum/like', 'ForumController@likePost');
     Route::post('forum/unlike', 'ForumController@unlikePost');
+    Route::post('forum/numLike', 'ForumController@getNumLikes');
 });
