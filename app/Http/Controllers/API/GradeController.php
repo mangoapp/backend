@@ -235,6 +235,35 @@ class GradeController extends Controller
 
         return $this->calculateWeightedAverage($student,$section);
     }
+
+    /**
+     * Gets all averages for all students
+     */
+    public function getAllAverages(Request $request) {
+        $section = Section::where('id',$request->section_id)->first();
+        if($section == null) {
+            return "invalid_section_id";
+        }
+
+        $user = Auth::user();
+        if(GeneralController::userHasPermissions($user,$section,2) == false) {
+            return "user_not_in_section";
+        }
+
+        $sectionUsers = $section->users;
+        $dataToReturn = array();
+        foreach($sectionUsers as $user) {
+            if($user->role($section) != null && $user->role($section)->level == 1) {
+                $grade = $this->calculateWeightedAverage($user,$section);
+                array_push($dataToReturn,array('user_id' => $user->id, 'average' => $grade));
+            }
+        }
+
+        return $dataToReturn;
+
+
+    }
+
     /**
      * Returns the current weighted average of a student in a section
      * @param User $user
@@ -277,6 +306,6 @@ class GradeController extends Controller
                 $finalGrade += ($weightedCateogry['percentage']*$relativeWeight);
             }
         }
-        dd($finalGrade);
+        return $finalGrade;
     }
 }

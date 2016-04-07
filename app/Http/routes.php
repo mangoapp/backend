@@ -69,6 +69,9 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::get('assignments/{assignment_id}/grades','GradeController@getAssignmentGrades'); //Get all grades for assignment (For TAs)
     Route::get('sections/{section_id}/users/{user_id}/currentAverage','GradeController@getStudentAverage');
     Route::get('sections/{section_id}/myAverage','GradeController@getCurrentStudentAverage');
+    Route::get('sections/{section_id}/allAverages','GradeController@getAllAverages');
+
+
     Route::post('assignments/{assignment_id}/grades','GradeController@createGrade');
     Route::post('assignments/{assignment_id}/updateGrade','GradeController@updateGrade');
     Route::post('assignments/{assignment_id}/deleteGrade','GradeController@deleteGrade');
