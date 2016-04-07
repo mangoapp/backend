@@ -85,7 +85,8 @@ class CourseController extends Controller
         $pivot->role_id = $profRole->id;
         $pivot->save();
 
-        return "success";
+        //return "success";
+        return $section->course_id;
     }
 
     public function createSection(Request $request) {
