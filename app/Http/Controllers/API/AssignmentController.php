@@ -31,21 +31,7 @@ class AssignmentController extends Controller
         if($section == null || GeneralController::hasPermissions($section,1) == false) {
             return "invalid_permissions";
         }
-        //Remove solutions from assignments
-        $safeData = array();
-        $temp = 0;
-        foreach($section->assignments as $assignment) {
-            $temp++;
-            $modified = clone $assignment;
-            if($assignment->data != null) {
-                $quizData = json_decode($assignment->data);
-                $modified['data'] = "Data_Removed! Fixme"; //FIXME- Remove only the answers, not the questions
-            } else {
-                $modified['data'] = null;
-            }
-            array_push($safeData,$modified);
-        }
-        return $safeData;
+        return $section->assignments()->select('id', 'title', 'description', 'deadline', 'filesubmission', 'maxScore', 'quiz', 'section_id', 'category_id', 'created_at', 'updated_at')->get();
     }
 
     /**
