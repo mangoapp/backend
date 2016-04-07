@@ -306,7 +306,7 @@ class ForumController extends Controller {
         }       
     }
 
-    public function likePost() {
+    public function likePost(Request $request) {
         $validator = Validator::make($request->all(), [
             'section_id' => 'required|exists:sections,id',
             'post_id' => 'required|exists:posts,id',
@@ -335,7 +335,7 @@ class ForumController extends Controller {
         $like->save();
         return "success";
     }
-    public function unlikePost() {
+    public function unlikePost(Request $request) {
         $validator = Validator::make($request->all(), [
             'section_id' => 'required|exists:sections,id',
             'post_id' => 'required|exists:posts,id',
