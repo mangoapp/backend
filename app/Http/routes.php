@@ -62,6 +62,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('sections/{section_id}/assignments','AssignmentController@createAssignment');
     Route::post('sections/{section_id}/updateAssignment','AssignmentController@updateAssignment');
     Route::post('sections/{section_id}/deleteAssignment','AssignmentController@deleteAssignment');
+    Route::post('sections/{section_id}/submitQuiz','AssignmentController@submitQuiz');
 
     Route::get('sections/assignments/{assignment_id}','AssignmentController@getQuiz');
 
