@@ -47,11 +47,17 @@ class ForumController extends Controller {
             return "invalid permissions";
         }
         // $thread = Thread::with('posts.user.roles')->with('posts.likes')->find($request->thread_id);
-		return Thread::with(
+		$arr = Thread::with(
 		 	['posts' => function($query) {
 		 		$query->orderBy('created_at', 'desc');
 		 	},'posts.user.roles', 'posts.likes']
-		)->with('user')->orderBy('created_at', 'asc')->find($request->thread_id);
+		)->with('user')->orderBy('created_at', 'asc')->find($request->thread_id)->toArray();
+        foreach($arr['posts'] as $key => $post) {
+            $p = Post::find($post['id']);
+            $arr['posts'][$key]['totalLikes'] = $p->getLikes();
+            // $p->getLikes();
+        }
+        return $arr;
         // return $thread;
     }
     public function createThread(Request $request) {

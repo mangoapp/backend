@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
-    protected $appends = ['swag'];
-
 	public function thread() {
     	return $this->belongsTo('App\Models\Thread');
     }
