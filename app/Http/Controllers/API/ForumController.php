@@ -381,12 +381,7 @@ class ForumController extends Controller {
         if($post == null) {
             return "unknown_post";
         }
-        $allLikes = Like::where('user_id', $user->id)->where('post_id',$post->id)->get();
-        $score = 0;
-        foreach($allLikes as $like) {
-            $score += $like->vote;
-        }
-        return $score;
+        return $post->getLikes();
     }
 
     public function likePost(Request $request) {

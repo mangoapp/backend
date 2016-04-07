@@ -94,7 +94,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     // lol urls
     Route::get('forum/{section_id}/threads', 'ForumController@allThreads');
     Route::get('forum/{section_id}/threads/{thread_id}/posts', 'ForumController@getPosts');
-    
+
     Route::post('forum/threads', 'ForumController@createThread');
     Route::post('forum/threads/update', 'ForumController@updateThread');
     Route::post('forum/threads/delete', 'ForumController@deleteThread');
