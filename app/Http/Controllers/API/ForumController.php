@@ -92,7 +92,7 @@ class ForumController extends Controller {
             'title' => 'required',
             'body' => 'required',
             'anonymous' => 'required|integer',
-            'sticky' => 'integer',
+            'sticky' => 'boolean',
         ]);
 
         if ($validator->fails()) {
@@ -125,6 +125,61 @@ class ForumController extends Controller {
 	    else {
 	    	return "no such thread";
 	    }
+    }
+    public function stickyThread(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'section_id' => 'required|exists:sections,id',
+            'thread_id' => 'required|exists:threads,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+        $user = Auth::user();
+        $section = Section::find($request->section_id);
+        if(GeneralController::hasPermissions($section, 2) == false) {
+            return "invalid permissions";
+        }
+
+        $thread = Thread::where('id', '=', $request->thread_id);
+
+        if($thread->count()) {
+            $thread = $thread->first();
+            $thread->sticky = 1;
+            $thread->save();
+            return "success";
+        }
+        else {
+            return "no such thread";
+        }
+    }
+
+    public function unstickyThread(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'section_id' => 'required|exists:sections,id',
+            'thread_id' => 'required|exists:threads,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+        $user = Auth::user();
+        $section = Section::find($request->section_id);
+        if(GeneralController::hasPermissions($section, 2) == false) {
+            return "invalid permissions";
+        }
+
+        $thread = Thread::where('id', '=', $request->thread_id);
+
+        if($thread->count()) {
+            $thread = $thread->first();
+            $thread->sticky = 0;
+            $thread->save();
+            return "success";
+        }
+        else {
+            return "no such thread";
+        }
     }
 
     public function lockThread(Request $request) {
