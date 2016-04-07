@@ -63,6 +63,8 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('sections/{section_id}/updateAssignment','AssignmentController@updateAssignment');
     Route::post('sections/{section_id}/deleteAssignment','AssignmentController@deleteAssignment');
 
+    Route::get('sections/assignments/{assignment_id}','AssignmentController@getQuiz');
+
     //Grades
     Route::get('sections/{section_id}/grades','GradeController@getSectionGrades'); //Get your grades for a section (For Students)
     Route::get('sections/{section_id}/allGrades','GradeController@getAllSectionGrades'); //Get all student's grades for all assignments section (TAs)
@@ -86,7 +88,6 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     //Notifications
     Route::get('notifications','NotificationController@getNotifications');
     Route::post('notifications','NotificationController@markNotificationRead');
-
 
     //Forum
     // lol urls

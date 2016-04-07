@@ -7,6 +7,7 @@ use App\Models\AssignmentCategory;
 use App\Models\Section;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -120,8 +121,6 @@ class AssignmentController extends Controller
         if($category->section_id != $section->id) {
             return "invalid category";
         }
-
-
         $assignment = Assignment::where('id',$request->id)->first();
 
         if($assignment == null)
@@ -143,10 +142,7 @@ class AssignmentController extends Controller
         else {
             $assignment->deadline = null;
         }
-
         $assignment->save();
-
-
         return "success";
     }
 
@@ -179,4 +175,22 @@ class AssignmentController extends Controller
         return "success";
     }
 
+    public function getQuiz(Request $request) {
+        $assignment = Assignment::where('id',$request->assignment_id)->first();
+        if($assignment == null)
+            return "invalid assignment id";
+
+        //Check user auth level
+        $section = $assignment->section;
+        if(GeneralController::hasPermissions($section, 1) == false) {
+            return "invalid permissions";
+        }
+        $arr = json_decode($assignment->data, true);
+        foreach($arr as $key => $question) {
+            echo $arr[$key]['correctAnswer'];
+            unset($arr[$key]['correctAnswer']);
+        }
+         return response($arr, '200')
+                  ->header('Content-Type', 'application/json');
+    }
 }
