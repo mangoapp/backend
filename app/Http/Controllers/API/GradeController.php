@@ -37,6 +37,21 @@ class GradeController extends Controller
         return $assignment->grades;
     }
 
+
+    /**
+     * Returns a list of ALL grades for ALL students in a section. Requires TA permissions.
+     * @param Request $request
+     * @return string
+     */
+    public function getAllSectionGrades(Request $request) {
+        $section = Section::where('id',$request->section_id)->first();
+        if($section == null || GeneralController::hasPermissions($section,2) == false) {
+            return "invalid_permissions";
+        }
+        $grades = Grade::where('section_id',$section->id)->get();
+        return $grades;
+    }
+
     /**
      * Returns a list of current user's grades for given section
      * @param Request $request

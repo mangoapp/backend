@@ -65,6 +65,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
 
     //Grades
     Route::get('sections/{section_id}/grades','GradeController@getSectionGrades'); //Get your grades for a section (For Students)
+    Route::get('sections/{section_id}/allGrades','GradeController@getAllSectionGrades'); //Get all student's grades for all assignments section (TAs)
     Route::get('assignments/{assignment_id}/grades','GradeController@getAssignmentGrades'); //Get all grades for assignment (For TAs)
     Route::post('assignments/{assignment_id}/grades','GradeController@createGrade');
     Route::post('assignments/{assignment_id}/updateGrade','GradeController@updateGrade');
