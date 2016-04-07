@@ -190,7 +190,6 @@ class AssignmentController extends Controller
             echo $arr[$key]['correctAnswer'];
             unset($arr[$key]['correctAnswer']);
         }
-         return response($arr, '200')
-                  ->header('Content-Type', 'application/json');
+         return response($arr, '200')->header('Content-Type', 'application/json');
     }
 }
