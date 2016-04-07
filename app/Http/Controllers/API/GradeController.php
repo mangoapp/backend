@@ -187,6 +187,11 @@ class GradeController extends Controller
         return "success";
     }
 
+    /**
+     * Gets grade for specified user
+     * @param Request $request
+     * @return string|void
+     */
     public function getStudentAverage(Request $request) {
         $section = Section::where('id',$request->section_id)->first();
         if($section == null) {
@@ -201,6 +206,29 @@ class GradeController extends Controller
         if(GeneralController::hasPermissions($section,2) == false) {
             return "invalid_permissions";
         }
+        if(GeneralController::userHasPermissions($student,$section,1) == false) {
+            return "user_not_in_section";
+        }
+
+        return $this->calculateWeightedAverage($student,$section);
+    }
+
+    /**
+     * Gets average for authed user
+     * @param Request $request
+     * @return string|void
+     */
+    public function getCurrentStudentAverage(Request $request) {
+        $section = Section::where('id',$request->section_id)->first();
+        if($section == null) {
+            return "invalid_section_id";
+        }
+
+        $student = Auth::user();
+        if($student == null) {
+            return "invalid_user_id";
+        }
+
         if(GeneralController::userHasPermissions($student,$section,1) == false) {
             return "user_not_in_section";
         }
