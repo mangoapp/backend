@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers\API;
 
 use App\Models\Course;
+use App\Models\Like;
 use App\Models\Section;
 use App\Models\Post;
 use App\Models\Thread;
@@ -321,14 +322,17 @@ class ForumController extends Controller {
             return "invalid permissions";
         }
 
-        $post = Post::where('id', '=', $request->post_id);
-        $like = Like::where('user_id', '=', $user->id)->where('post_id', '=', $post->id);
-        if($like->count()) {
-            $like = $like->first();
+        $post = Post::where('id', $request->post_id)->first();
+        if($post == null) {
+            return "unknown_post";
         }
-        else {
+        $like = Like::where('user_id', $user->id)->where('post_id',$post->id)->first();
+
+
+        if($like == null) {
             $like = new Like;
         }
+
         $like->user_id = $user->id;
         $like->post_id = $post->id;
         $like->vote = 1;
@@ -350,14 +354,16 @@ class ForumController extends Controller {
             return "invalid permissions";
         }
 
-        $post = Post::where('id', '=', $request->post_id);
-        $like = Like::where('user_id', '=', $user->id)->where('post_id', '=', $post->id);
-        if($like->count()) {
-            $like = $like->first();
+        $post = Post::where('id', '=', $request->post_id)->first();
+        if($post == null) {
+            return "unknown_post";
         }
-        else {
+
+        $like = Like::where('user_id', $user->id)->where('post_id',$post->id)->first();
+        if($like == null) {
             $like = new Like;
         }
+
         $like->user_id = $user->id;
         $like->post_id = $post->id;
         $like->vote = 0;
