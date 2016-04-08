@@ -66,7 +66,7 @@ class ForumController extends Controller {
             'title' => 'required',
             'body' => 'required',
             'anonymous' => 'required|integer',
-            'sticky' => 'integer',
+            'sticky' => 'required|integer',
         ]);
 
         if ($validator->fails()) {
@@ -85,8 +85,8 @@ class ForumController extends Controller {
         $thread->user_id = $user->id;
         $thread->anonymous = $request->anonymous;
 
-        if(GeneralController::hasPermissions($section, 2) == false && $request->has('sticky')) {
-        	$thread->sticky = 1;
+        if(GeneralController::hasPermissions($section, 2) == true) {
+        	$thread->sticky = $request->sticky;
         }
         $thread->save();
         return "success";
