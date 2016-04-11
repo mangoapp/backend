@@ -33,4 +33,22 @@ class EventsController extends Controller
         }
         return $section->events()->get();
     }
+
+    public function getEventsByUser(Request $request) {
+    	// Get all sections
+    	$sections = Auth::user()->sections;
+    	$allevents = array();
+
+    	// Iterate through all sections
+    	foreach($sections as $section) {
+    		// Get all events in this section
+    		$events = Event::where('section_id', '=', $section->id)->get();
+    		// Iterate through all events
+    		foreach($events as $event) {
+    			// Add event to collection array
+    			$allevents[] = $event->toArray();
+    		}
+    	}
+    	return $allevents;
+    }
 }

@@ -107,4 +107,5 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
 
     // Events
     Route::get('sections/{section_id}/events', 'EventsController@getEventsBySection');
+    Route::get('users/events', 'EventsController@getEventsByUser');
 });
