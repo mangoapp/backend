@@ -35,4 +35,8 @@ class Section extends Model {
     public function users() {
         return $this->belongsToMany('App\Models\User','role_user');
     }
+
+    public function events() {
+        return $this->hasMany('App\Models\Event');
+    }
 }

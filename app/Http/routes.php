@@ -63,7 +63,6 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('sections/{section_id}/updateAssignment','AssignmentController@updateAssignment');
     Route::post('sections/{section_id}/deleteAssignment','AssignmentController@deleteAssignment');
     Route::post('sections/{section_id}/submitQuiz','AssignmentController@submitQuiz');
-
     Route::get('sections/assignments/{assignment_id}','AssignmentController@getQuiz');
 
     //Grades
@@ -73,7 +72,6 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::get('sections/{section_id}/users/{user_id}/currentAverage','GradeController@getStudentAverage');
     Route::get('sections/{section_id}/myAverage','GradeController@getCurrentStudentAverage');
     Route::get('sections/{section_id}/allAverages','GradeController@getAllAverages');
-
 
     Route::post('assignments/{assignment_id}/grades','GradeController@createGrade');
     Route::post('assignments/{assignment_id}/updateGrade','GradeController@updateGrade');
@@ -91,10 +89,8 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('notifications','NotificationController@markNotificationRead');
 
     //Forum
-    // lol urls
     Route::get('forum/{section_id}/threads', 'ForumController@allThreads');
     Route::get('forum/{section_id}/threads/{thread_id}/posts', 'ForumController@getPosts');
-
     Route::post('forum/threads', 'ForumController@createThread');
     Route::post('forum/threads/update', 'ForumController@updateThread');
     Route::post('forum/threads/delete', 'ForumController@deleteThread');
@@ -102,12 +98,13 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('forum/threads/unlock', 'ForumController@unlockThread');
     Route::post('forum/threads/sticky', 'ForumController@stickyThread');
     Route::post('forum/threads/unsticky', 'ForumController@unstickyThread');
-
     Route::post('forum/posts', 'ForumController@createPost');
     Route::post('forum/posts/update', 'ForumController@updatePost');
     Route::post('forum/posts/delete', 'ForumController@deletePost');
-
     Route::post('forum/like', 'ForumController@likePost');
     Route::post('forum/unlike', 'ForumController@unlikePost');
     Route::post('forum/numLike', 'ForumController@getNumLikes');
+
+    // Events
+    Route::get('sections/{section_id}/events', 'EventsController@getEventsBySection');
 });
