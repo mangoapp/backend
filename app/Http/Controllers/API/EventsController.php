@@ -7,11 +7,13 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\Section;
+use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
 use Log;
 use Validator;
 use Carbon\Carbon;
+use \Eluceo\iCal\Component\Calendar;
 
 class EventsController extends Controller
 {
@@ -145,5 +147,38 @@ class EventsController extends Controller
         $event = Event::where('id', '=', $request->event_id)->first();
         $event->delete();
         return "success";
+    }
+
+    public function generateCalendar(Request $request) {
+        $user = User::where('uuid', '=', $request->uuid);
+        if($user->count()) {
+            $user = $user->first();
+        }
+        else {
+            return "invalid url";
+        }
+
+        $vCalendar = new Calendar('www.example.com');
+        $vEvent = new \Eluceo\iCal\Component\Event();
+
+        $sections = $user->sections;
+
+        // Iterate through all sections
+        foreach($sections as $section) {
+            // Get all events in this section
+            $events = Event::where('section_id', '=', $section->id)->get();
+            // Iterate through all events
+            foreach($events as $event) {
+                $vEvent
+                    ->setDtStart(new \DateTime($event->begin))
+                    ->setDtEnd(new \DateTime($event->end))
+                    ->setNoTime(true)
+                    ->setSummary($event->title);
+                $vCalendar->addComponent($vEvent);
+            }
+        }
+        header('Content-Type: text/calendar; charset=utf-8');
+        header('Content-Disposition: attachment; filename="cal.ics"');
+        echo $vCalendar->render();
     }
 }
