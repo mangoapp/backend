@@ -159,8 +159,6 @@ class EventsController extends Controller
         }
 
         $vCalendar = new Calendar('www.example.com');
-        $vEvent = new \Eluceo\iCal\Component\Event();
-
         $sections = $user->sections;
 
         // Iterate through all sections
@@ -169,6 +167,7 @@ class EventsController extends Controller
             $events = Event::where('section_id', '=', $section->id)->get();
             // Iterate through all events
             foreach($events as $event) {
+                $vEvent = new \Eluceo\iCal\Component\Event();
                 $vEvent
                     ->setDtStart(new \DateTime($event->begin))
                     ->setDtEnd(new \DateTime($event->end))
