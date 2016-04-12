@@ -19,11 +19,14 @@ class CreateEventsTable extends Migration
             $table->string('description');
             $table->timestamp('begin');
             $table->timestamp('end');
-            // //this creates the "column"
             $table->integer('section_id')->unsigned();
-            //this is the id pointing
+            $table->integer('user_id')->unsigned();
+
             $table->foreign('section_id')->references('id')
             ->on('sections')->onUpdate('cascade')->onDelete('cascade');
+
+            $table->foreign('user_id')->references('id')->on('users')
+            ->onUpdate('cascade')->onDelete('cascade');
 
             $table->timestamps();
         });

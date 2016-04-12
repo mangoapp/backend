@@ -73,6 +73,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::get('sections/{section_id}/myAverage','GradeController@getCurrentStudentAverage');
     Route::get('sections/{section_id}/allAverages','GradeController@getAllAverages');
 
+    // Verify that assignment_id is needed in the url
     Route::post('assignments/{assignment_id}/grades','GradeController@createGrade');
     Route::post('assignments/{assignment_id}/updateGrade','GradeController@updateGrade');
     Route::post('assignments/{assignment_id}/deleteGrade','GradeController@deleteGrade');
@@ -80,6 +81,8 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     //Category
     Route::get('sections/{section_id}/categories','CategoryController@getSectionCategories'); //Get all categories in a section
     Route::get('sections/{section_id}/categories/{category_id}/assignments','CategoryController@getCategoryAssignments'); //Get all assignments in a category
+
+    // verify that the get url param is actually needed. If it's a post it should be put in the body not URL
     Route::post('sections/{section_id}/categories','CategoryController@createCategory');
     Route::post('sections/{section_id}/updateCategory','CategoryController@updateCategory');
     Route::post('sections/{section_id}/deleteCategory','CategoryController@deleteCategory');
@@ -108,4 +111,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     // Events
     Route::get('sections/{section_id}/events', 'EventsController@getEventsBySection');
     Route::get('users/events', 'EventsController@getEventsByUser');
+    Route::post('sections/events/create', 'EventsController@createEvent');
+    Route::post('sections/events/update', 'EventsController@editEvent');
+    Route::post('sections/events/delete', 'EventsController@deleteEvent');
 });

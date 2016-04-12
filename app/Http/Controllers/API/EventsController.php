@@ -11,6 +11,7 @@ use Auth;
 use Illuminate\Http\Request;
 use Log;
 use Validator;
+use Carbon\Carbon;
 
 class EventsController extends Controller
 {
@@ -50,5 +51,99 @@ class EventsController extends Controller
     		}
     	}
     	return $allevents;
+    }
+
+    public function createEvent(Request $request) {
+    	$validator = Validator::make($request->all(), [
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'begin' => 'required|integer',
+            'end' => 'required|integer',
+            'section_id' => 'required|exists:sections,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+        if($request->end < $request->begin) {
+        	return "invalid time";
+        }
+		$section = Section::where('id',$request->section_id)->first();
+        if(GeneralController::hasPermissions($section,2) == false) {
+            return "invalid_permissions";
+        }
+
+        $event = new Event;
+        $event->title = $request->title;
+        $event->description = $request->description;
+        $event->begin = Carbon::createFromTimestamp($request->begin, 'America/New_York')->toDateTimeString();  
+        $event->end = Carbon::createFromTimestamp($request->end, 'America/New_York')->toDateTimeString();  
+        $event->section_id = $request->section_id;
+        $event->user_id = Auth::user()->id;
+        $event->save();
+        return "success";
+    }
+    public function editEvent(Request $request) {
+    	$validator = Validator::make($request->all(), [
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'begin' => 'required|integer',
+            'end' => 'required|integer',
+            'section_id' => 'required|exists:sections,id',
+            'event_id' => 'required|exists:events,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+        if($request->end < $request->begin) {
+        	return "invalid time";
+        }
+        
+		$event = Event::where('id', '=', $request->event_id)->where('section_id', '=', $request->section_id);
+        if($event->count()) {
+        	$event = $event->first();
+        }
+        else {
+        	return "invalid permissions to modify event";
+        }
+        $section = Section::where('id',$request->section_id)->first();
+        if(GeneralController::hasPermissions($section,2) == false) {
+            return "invalid_permissions";
+        }
+        $event->title = $request->title;
+        $event->description = $request->description;
+        $event->begin = Carbon::createFromTimestamp($request->begin, 'America/New_York')->toDateTimeString();
+        $event->end = Carbon::createFromTimestamp($request->end, 'America/New_York')->toDateTimeString();
+        $event->user_id = Auth::user()->id;
+        $event->save();
+        return "success";
+    }
+
+    public function deleteEvent(Request $request) {
+		$validator = Validator::make($request->all(), [
+            'section_id' => 'required|exists:sections,id',
+            'event_id' => 'required|exists:events,id',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+
+        $event = Event::where('id', '=', $request->event_id)->where('section_id', '=', $request->section_id);
+        if($event->count()) {
+        	$event = $event->first();
+        }
+        else {
+        	return "invalid permissions to modify event";
+        }
+        $section = Section::where('id',$request->section_id)->first();
+        if(GeneralController::hasPermissions($section,2) == false) {
+            return "invalid_permissions";
+        }
+
+        $event = Event::where('id', '=', $request->event_id)->first();
+        $event->delete();
+        return "success";
     }
 }
