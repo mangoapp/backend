@@ -16,4 +16,8 @@ class Assignment extends Model {
         return $this->hasMany('App\Models\Grade');
     }
 
+    public function files() {
+        return $this->hasMany('App\Models\AssignmentFileUpload','assignment_id','id');
+    }
+
 }
