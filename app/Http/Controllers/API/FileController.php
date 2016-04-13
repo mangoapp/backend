@@ -5,7 +5,11 @@ namespace App\Http\Controllers\API;
 use App\Models\Assignment;
 use App\Models\AssignmentFileUpload;
 use App\Models\FileUpload;
+use App\Models\Section;
 use App\Models\User;
+use Auth;
+use DateTime;
+use File;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -13,12 +17,49 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Storage;
+use Validator;
 
 class FileController extends Controller
 {
-    public function debug(Request $request) {
-        $ret = $this->attachAssignmentFile($request->file('file'),Assignment::findOrFail(1),User::findOrFail(1));
-        return $ret ? "Okay" : "Failed";
+    //Apply middleware
+    public function __construct()
+    {
+        //Require JWT token for all functions
+        $this->middleware("jwt.auth");
+    }
+
+
+    public function submitFile(Request $request) {
+        $assignment = Assignment::findOrFail($request->assignment_id);
+        $section = $assignment->section;
+        if(GeneralController::hasPermissions($section, 1) == false) {
+            return "invalid permissions"; //User is not in section
+        }
+
+        //Check assignment allows files
+        if(!$assignment->filesubmission) {
+            return "file submissions not allowed";
+        }
+
+        //Check Assignment Deadline
+        if($assignment->deadline != null) {
+            if(new DateTime() > $assignment->deadline) {
+                return "deadline_passed";
+            }
+        }
+
+
+        $fileToUpload = $request->file('file');
+        //Check file type
+        $fileType = File::extension($fileToUpload->getClientOriginalName());
+        if($fileType != 'pdf') {
+            return "invalid_filetype";
+        }
+
+        if($fileToUpload == null)
+            return "invalid_file";
+        $ret = $this->attachAssignmentFile($fileToUpload,$assignment,Auth::user());
+        return $ret ? "success" : "file_upload_failed";
     }
 
     /**
