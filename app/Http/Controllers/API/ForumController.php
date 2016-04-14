@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Validator;
 use Auth;
@@ -300,6 +301,14 @@ class ForumController extends Controller {
         $post->anonymous = $request->anonymous;
         $post->save();
 
+        Log::debug("Create Post: ".$post);
+        //Notify thread owner
+        $thread = Thread::where('id',$post->thread_id)->first();
+        if($thread != null) {
+            //Don't notify self-replies
+            if($thread->user != $user)
+                NotificationController::sendNotification($thread->user,$section,"Thread Response","Someone has replied to your thread '".$thread->title."'.");
+        }
         return "success";  
     }
 
