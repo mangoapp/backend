@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Models\Assignment;
 use App\Models\AssignmentFileUpload;
+use App\Models\CourseContent;
 use App\Models\FileUpload;
 use App\Models\Section;
 use App\Models\User;
@@ -34,12 +35,15 @@ class FileController extends Controller
      * @param Request $request
      * @return string
      */
-    public function submitFile(Request $request) {
+    public function submitAssignmentFile(Request $request) {
         $assignment = Assignment::findOrFail($request->assignment_id);
         $section = $assignment->section;
         if(GeneralController::hasPermissions($section, 1) == false) {
             return "invalid permissions"; //User is not in section
         }
+
+        if($request->file == null)
+            return "no_file";
 
         //Check assignment allows files
         if(!$assignment->filesubmission) {
@@ -63,7 +67,34 @@ class FileController extends Controller
 
         if($fileToUpload == null)
             return "invalid_file";
-        $ret = $this->attachAssignmentFile($fileToUpload,$assignment,Auth::user());
+        $ret = FileController::attachAssignmentFile($fileToUpload,$assignment,Auth::user());
+        return $ret ? "success" : "file_upload_failed";
+    }
+
+    /**
+     * Uploads a file to the course content pool
+     * @param Request $request
+     * @return string
+     */
+    public function submitCourseFile(Request $request) {
+        $section = Section::find($request->section_id);
+        if(GeneralController::hasPermissions($section, 2) == false) {
+            return "invalid permissions"; //User is not allowed
+        }
+
+        if($request->file == null)
+            return "no_file";
+
+        $fileToUpload = $request->file('file');
+        //Check file type
+        $fileType = File::extension($fileToUpload->getClientOriginalName());
+        if($fileType != 'pdf') {
+            return "invalid_filetype";
+        }
+
+        if($fileToUpload == null)
+            return "invalid_file";
+        $ret = FileController::attachCourseFile($fileToUpload,$section);
         return $ret ? "success" : "file_upload_failed";
     }
 
@@ -72,7 +103,7 @@ class FileController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\Response|string
      */
-    public function downloadFile(Request $request) {
+    public function downloadAssignmentFile(Request $request) {
         $fileUpload = AssignmentFileUpload::where('id',$request->file_id)->first();
 
         //Ensure that file exists
@@ -99,11 +130,38 @@ class FileController extends Controller
     }
 
     /**
+     * Serves the given file
+     * @param Request $request
+     * @return \Illuminate\Http\Response|string
+     */
+    public function downloadCourseFile(Request $request) {
+        $courseContent = CourseContent::where('id',$request->file_id)->first();
+
+        //Ensure that file exists
+        if($courseContent == null)
+            return "invalid_file";
+
+        //Check for permissions
+        $section = $courseContent->section;
+        if(GeneralController::hasPermissions($section, 1) == false) {
+                return "invalid permissions";
+        }
+        $fileName = storage_path()."/app/uploads/".$courseContent->document->hash;
+        if(File::exists($fileName)) {
+            $file = File::get($fileName);
+            $response = Response::make($file,200);
+            $response->header("Content-Type", "application/pdf");
+            return $response;
+        } else
+            return "invalid File";
+    }
+
+    /**
      * Returns the file submission ID's for an assignment
      * @param Request $request
      * @return \Illuminate\Http\Response|string
      */
-    public function getFiles(Request $request) {
+    public function getAssignmentFiles(Request $request) {
         $assignment = Assignment::findOrFail($request->assignment_id);
         $section = $assignment->section;
         if(GeneralController::hasPermissions($section, 2) == false) {
@@ -114,13 +172,27 @@ class FileController extends Controller
     }
 
     /**
+     * Returns the file submission ID's for an assignment
+     * @param Request $request
+     * @return \Illuminate\Http\Response|string
+     */
+    public function getCourseFiles(Request $request) {
+        $section = Section::find($request->section_id);
+        if(GeneralController::hasPermissions($section, 1) == false) {
+            return "invalid permissions"; //User is not in section
+        }
+        $submittedFiles = $section->files()->get();
+        return $submittedFiles;
+    }
+
+    /**
      * Uploads a file for the given assignment
      * @param $file
      * @param Assignment $assignment
      * @param User $user
      * @return bool
      */
-    public static function attachAssignmentFile($file, Assignment $assignment, User $user) {
+    private static function attachAssignmentFile($file, Assignment $assignment, User $user) {
         //Check that  file exists
         if($file == null || $assignment == null || $user == null)
             return false;
@@ -152,6 +224,30 @@ class FileController extends Controller
         }
         return true;
     }
+
+    /**
+     * Uploads a file for the given assignment
+     * @param $file
+     * @param Section $section
+     * @return bool
+     * @internal param Assignment $assignment
+     * @internal param User $user
+     */
+    private static function attachCourseFile($file, Section $section) {
+        //Check that  file exists
+        if($file == null || $section == null)
+            return false;
+
+        //Upload new file
+        Log::debug("Uploaded course content file for section".$section->id);
+        $fileId = FileController::uploadFile($file);
+        $courseContent = new CourseContent;
+        $courseContent->file_id = $fileId;
+        $courseContent->section_id = $section->id;
+        $courseContent->save();
+        return true;
+    }
+
 
     /**
      * Uploads a file for the given assignment.

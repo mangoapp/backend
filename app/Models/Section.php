@@ -39,4 +39,8 @@ class Section extends Model {
     public function events() {
         return $this->hasMany('App\Models\Event');
     }
+
+    public function files() {
+        return $this->hasMany('App\Models\CourseContent','section_id','id');
+    }
 }
