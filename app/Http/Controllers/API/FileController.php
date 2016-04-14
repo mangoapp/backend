@@ -99,6 +99,30 @@ class FileController extends Controller
     }
 
     /**
+     * Deletes a previously uploaded course content file
+     * @param Request $request
+     * @return string
+     */
+    public function deleteCourseFile(Request $request) {
+        $courseContent = CourseContent::find($request->file_id);
+        if($courseContent == null)
+            return "invalid_file";
+        $section = $courseContent->section;
+        if(GeneralController::hasPermissions($section, 2) == false) {
+            return "invalid permissions"; //User is not in section
+        }
+
+        //Delete the content AND the file from the server
+        $fileName = storage_path()."/app/uploads/".$courseContent->document->hash;
+        $fileUpload = $courseContent->document;
+        Log::debug("Deleting course content ".$courseContent->id." and its linked file <".$fileName.">");
+        File::delete($fileName);
+        $courseContent->delete();
+        $fileUpload->delete();
+        return "success";
+    }
+
+    /**
      * Serves the given file
      * @param Request $request
      * @return \Illuminate\Http\Response|string

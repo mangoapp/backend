@@ -83,10 +83,11 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::get('assignments/{assignment_id}/uploads','FileController@getAssignmentFiles');
     Route::get('files/{file_id}','FileController@downloadAssignmentFile');
 
-    //Assignment File Submission
+    //Course Content File Submission
     Route::post('sections/{section_id}/upload','FileController@submitCourseFile'); //Upload newfile
     Route::get('sections/{section_id}/uploads','FileController@getCourseFiles'); //Get list of all uploaded files
     Route::get('sections/files/{file_id}','FileController@downloadCourseFile'); //Get the pdf which was uploaded
+    Route::post('sections/files/{file_id}/delete','FileController@deleteCourseFile'); //Deletes the pdf which was uploaded
 
     //Category
     Route::get('sections/{section_id}/categories','CategoryController@getSectionCategories'); //Get all categories in a section
