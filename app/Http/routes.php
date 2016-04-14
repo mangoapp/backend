@@ -80,6 +80,8 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
 
     //File Submission
     Route::post('assignments/{assignment_id}/upload','FileController@submitFile');
+    Route::get('assignments/{assignment_id}/uploads','FileController@getFiles');
+    Route::get('files/{file_id}','FileController@downloadFile');
 
     //Category
     Route::get('sections/{section_id}/categories','CategoryController@getSectionCategories'); //Get all categories in a section

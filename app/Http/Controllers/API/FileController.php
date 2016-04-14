@@ -16,6 +16,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Response;
 use Storage;
 use Validator;
 
@@ -28,7 +29,11 @@ class FileController extends Controller
         $this->middleware("jwt.auth");
     }
 
-
+    /**
+     * Uploads a file to the server
+     * @param Request $request
+     * @return string
+     */
     public function submitFile(Request $request) {
         $assignment = Assignment::findOrFail($request->assignment_id);
         $section = $assignment->section;
@@ -60,6 +65,52 @@ class FileController extends Controller
             return "invalid_file";
         $ret = $this->attachAssignmentFile($fileToUpload,$assignment,Auth::user());
         return $ret ? "success" : "file_upload_failed";
+    }
+
+    /**
+     * Serves the given file
+     * @param Request $request
+     * @return \Illuminate\Http\Response|string
+     */
+    public function downloadFile(Request $request) {
+        $fileUpload = AssignmentFileUpload::where('id',$request->file_id)->first();
+
+        //Ensure that file exists
+        if($fileUpload == null)
+            return "invalid_file";
+
+        //Check for TA permissions
+        $section = $fileUpload->assignment->section;
+        if(GeneralController::hasPermissions($section, 2) == false) {
+            //User is not a TA. Is this the user who uploaded the file?
+            if(Auth::user() != $fileUpload->user) {
+                //User doesn't own this file AND they are not a TA
+                return "invalid permissions";
+            }
+        }
+        $fileName = storage_path()."/app/uploads/".$fileUpload->document->hash;
+        if(File::exists($fileName)) {
+            $file = File::get($fileName);
+            $response = Response::make($file,200);
+            $response->header("Content-Type", "application/pdf");
+            return $response;
+        } else
+            return "invalid File";
+    }
+
+    /**
+     * Returns the file submission ID's for an assignment
+     * @param Request $request
+     * @return \Illuminate\Http\Response|string
+     */
+    public function getFiles(Request $request) {
+        $assignment = Assignment::findOrFail($request->assignment_id);
+        $section = $assignment->section;
+        if(GeneralController::hasPermissions($section, 2) == false) {
+            return "invalid permissions"; //User is not in section
+        }
+        $submittedFiles = $assignment->files()->get();
+        return $submittedFiles;
     }
 
     /**
