@@ -176,6 +176,13 @@ class EventsController extends Controller
                 $vCalendar->addComponent($vEvent);
             }
         }
+        // Headers that might not actually do anything
+		header( 'Expires: Sat, 26 Jul 1997 05:00:00 GMT' ); //date in the past
+		header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s' ) . ' GMT' ); //tell it we just updated
+		header( 'Cache-Control: no-store, no-cache, must-revalidate' ); //force revaidation
+		header( 'Cache-Control: post-check=0, pre-check=0', false );
+		header( 'Pragma: no-cache' );
+
         header('Content-Type: text/calendar; charset=utf-8');
         header('Content-Disposition: attachment; filename="cal.ics"');
         echo $vCalendar->render();
