@@ -11,4 +11,7 @@ class Poll extends Model
     public function section() {
         return $this->belongsTo('App\Models\Section');
     }
+    public function responses() {
+        return $this->hasMany('App\Models\PollResponse');
+    }
 }

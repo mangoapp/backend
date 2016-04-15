@@ -137,7 +137,7 @@ class PollController extends Controller
             //Update existing response
             $response->answer = $request->answer;
             $response->save();
-            return "success2";
+            return "success";
         }
 
     }
@@ -214,5 +214,25 @@ class PollController extends Controller
         }
 
         return $section->polls()->where('status',1)->get();
+    }
+
+    /**
+     * Gets all responses to a poll
+     * @param Request $request
+     * @return string
+     */
+    public function getPollResponses(Request $request) {
+        //Find poll
+        $poll = Poll::find($request->poll_id);
+        if($poll == null)
+            return "invalid_poll";
+
+        //Check permissions
+        $section = $poll->section;
+        if(GeneralController::userHasPermissions(Auth::user(),$section,2) == false) {
+            return "invalid_permissions";
+        }
+
+        return $poll->responses;
     }
 }
