@@ -131,5 +131,10 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('sections/polls', 'PollController@createPoll');
     Route::post('sections/polls/update', 'PollController@updatePoll');
     Route::post('sections/polls/delete', 'PollController@deletePoll');
-    
+
+    //Poll Responses
+    Route::post('sections/polls/{poll_id}/openPoll', 'PollController@openPoll'); //Opens the poll for submission
+    Route::post('sections/polls/{poll_id}/closePoll', 'PollController@closePoll'); //Closes the poll for submission
+    Route::post('sections/polls/{poll_id}/submitResponse', 'PollController@submitResponse'); //Submits (or updates) poll response
+
 });

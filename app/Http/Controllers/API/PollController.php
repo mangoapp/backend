@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\Poll;
+use App\Models\PollResponse;
 use App\Models\Section;
+use Auth;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -47,7 +49,6 @@ class PollController extends Controller
             'poll_id' => 'required|exists:polls,id',
             'answer' => 'required|integer' ,
             'description' => 'required',
-            'status' => 'required|integer'
         ]);
         if ($validator->fails()) {
             return $validator->errors()->all();
@@ -65,7 +66,6 @@ class PollController extends Controller
         }
 
         $poll->answer = $request->answer;
-        $poll->status = 0;
         $poll->description = $request->description;
         $poll->section_id = $section->id;
         $poll->status = $request->status;
@@ -95,6 +95,96 @@ class PollController extends Controller
         //Delete
         $poll->delete();
         return "success";
+    }
+
+    /**
+     * Submits an answer for a poll
+     */
+    public function submitResponse(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'answer' => 'required|integer'
+        ]);
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+
+        //Find poll
+        $poll = Poll::find($request->poll_id);
+        if($poll == null)
+            return "invalid_poll";
+
+        //Check permissions
+        $section = $poll->section;
+        if(GeneralController::userHasPermissions(Auth::user(),$section,1) == false) {
+            return "invalid_permissions";
+        }
+
+        //Check that poll is open
+        if($poll->status != 1)
+            return "poll_closed";
+
+        //Check if response exists
+        $response = PollResponse::where('user_id',Auth::user()->id)->where('poll_id',$poll->id)->first();
+        if($response == null) {
+            //Create new response
+            $response = new PollResponse;
+            $response->poll_id = $poll->id;
+            $response->user_id = Auth::user()->id;
+            $response->answer = $request->answer;
+            $response->save();
+            return "success";
+        } else {
+            //Update existing response
+            $response->answer = $request->answer;
+            $response->save();
+            return "success2";
+        }
+
+    }
+
+    /**
+     * Opens a poll for student responses
+     * @param Request $request
+     * @return array|string
+     */
+    public function openPoll(Request $request) {
+        //Find poll
+        $poll = Poll::find($request->poll_id);
+        if($poll == null)
+            return "invalid_poll";
+
+        //Check permissions
+        $section = $poll->section;
+        if(GeneralController::userHasPermissions(Auth::user(),$section,2) == false) {
+            return "invalid_permissions";
+        }
+        $poll->status = 1;
+        $poll->save();
+        return "success";
+
+    }
+
+
+    /**
+     * Opens a poll for student responses
+     * @param Request $request
+     * @return array|string
+     */
+    public function closePoll(Request $request) {
+        //Find poll
+        $poll = Poll::find($request->poll_id);
+        if($poll == null)
+            return "invalid_poll";
+
+        //Check permissions
+        $section = $poll->section;
+        if(GeneralController::userHasPermissions(Auth::user(),$section,2) == false) {
+            return "invalid_permissions";
+        }
+        $poll->status = 2;
+        $poll->save();
+        return "success";
+
     }
 
 }
