@@ -43,4 +43,8 @@ class Section extends Model {
     public function files() {
         return $this->hasMany('App\Models\CourseContent','section_id','id');
     }
+
+    public function polls() {
+        return $this->hasMany('App\Models\Poll','section_id','id');
+    }
 }

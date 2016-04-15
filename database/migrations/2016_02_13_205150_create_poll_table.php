@@ -12,19 +12,18 @@ class CreatePollTable extends Migration
      */
     public function up()
     {
-        Schema::create('poll', function (Blueprint $table) {
-            //attributes below
+        Schema::create('polls', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('answer');
-            $table->boolean('status');
-            $table->timestamps();
+            $table->integer('answer');
+            $table->integer('status');
             $table->string('description');
 
-            // //this creates the "column"
             $table->integer('section_id')->unsigned();
-            //this is the id pointing
             $table->foreign('section_id')->references('id')
-            ->on('sections')->onUpdate('cascade')->onDelete('cascade');
+                ->on('sections')->onUpdate('cascade')->onDelete('cascade');
+
+            $table->timestamps();
+
         });
     }
 
@@ -35,6 +34,6 @@ class CreatePollTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('poll');
+        Schema::dropIfExists('polls');
     }
 }

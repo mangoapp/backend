@@ -12,16 +12,19 @@ class PollResponse extends Migration
      */
     public function up()
     {
-        Schema::create('poll_response', function (Blueprint $table) {
+        Schema::create('responses', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('answer');
-            $table->timestamps();
+            $table->integer('answer');
 
-            // //this creates the "column"
             $table->integer('poll_id')->unsigned();
-            //this is the id pointing
-            $table->foreign('poll_id')->references('id')
-            ->on('poll')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('poll_id')->references('id')->on('polls')
+                ->onUpdate('cascade')->onDelete('cascade');
+
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('cascade');
+
+            $table->timestamps();
         });
     }
 
@@ -32,6 +35,6 @@ class PollResponse extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('poll_response');
+        Schema::dropIfExists('responses');
     }
 }
