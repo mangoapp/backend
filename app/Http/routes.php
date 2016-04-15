@@ -131,6 +131,8 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('sections/polls', 'PollController@createPoll');
     Route::post('sections/polls/update', 'PollController@updatePoll');
     Route::post('sections/polls/delete', 'PollController@deletePoll');
+    Route::get('sections/{section_id}/polls', 'PollController@getAllPolls'); //Gets all polls, even inactive ones
+    Route::get('sections/{section_id}/activePolls', 'PollController@getActivePolls'); //Gets all polls, even inactive ones
 
     //Poll Responses
     Route::post('sections/polls/{poll_id}/openPoll', 'PollController@openPoll'); //Opens the poll for submission

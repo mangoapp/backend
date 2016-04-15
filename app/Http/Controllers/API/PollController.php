@@ -184,7 +184,35 @@ class PollController extends Controller
         $poll->status = 2;
         $poll->save();
         return "success";
-
     }
 
+    /**
+     * Gets all polls, even inactive ones
+     * @param Request $request
+     * @return string
+     */
+    public function getAllPolls(Request $request) {
+        //Check permissions
+        $section = Section::find($request->section_id);
+        if(GeneralController::hasPermissions($section,2) == false) {
+            return "invalid_permissions";
+        }
+
+        return $section->polls;
+    }
+
+    /**
+     * Gets all polls, even inactive ones
+     * @param Request $request
+     * @return string
+     */
+    public function getActivePolls(Request $request) {
+        //Check permissions
+        $section = Section::find($request->section_id);
+        if(GeneralController::hasPermissions($section,2) == false) {
+            return "invalid_permissions";
+        }
+
+        return $section->polls()->where('status',1)->get();
+    }
 }
