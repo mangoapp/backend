@@ -4,9 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Nicolaslopezj\Searchable\SearchableTrait;
 
 class Thread extends Model
 {
+    use SearchableTrait;
+    protected $searchable = [
+        'columns' => [
+            'threads.title' => 10,
+            'threads.body' => 5,
+        ]
+    ];
+
 	public function course() {
     	return $this->belongsTo('App\Models\Course');
     }

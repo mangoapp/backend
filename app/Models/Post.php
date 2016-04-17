@@ -4,9 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Nicolaslopezj\Searchable\SearchableTrait;
 
 class Post extends Model
 {
+    use SearchableTrait;
+    protected $searchable = [
+        'columns' => [
+            'posts.body' => 10,
+        ]
+    ];
+
 	public function thread() {
     	return $this->belongsTo('App\Models\Thread');
     }

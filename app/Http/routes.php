@@ -140,4 +140,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('sections/polls/{poll_id}/submitResponse', 'PollController@submitResponse'); //Submits (or updates) poll response
     Route::get('sections/polls/{poll_id}/responses', 'PollController@getPollResponses'); //Gets responses to a poll
 
+    //Search Terms
+    Route::get('sections/{section_id}/search/{search_query}', 'SearchController@search'); //Gets responses to a poll
+
 });

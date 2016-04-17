@@ -1,7 +1,19 @@
 <?php
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
+use Nicolaslopezj\Searchable\SearchableTrait;
+
+
 class Assignment extends Model {
+    use SearchableTrait;
+
+    protected $searchable = [
+        'columns' => [
+            'assignments.title' => 10,
+            'assignments.description' => 5,
+        ]
+    ];
+
     protected $dates = ['deadline'];
 
     public function section() {
