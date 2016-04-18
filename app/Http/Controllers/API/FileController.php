@@ -77,6 +77,15 @@ class FileController extends Controller
      * @return string
      */
     public function submitCourseFile(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'description' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+
         $section = Section::find($request->section_id);
         if(GeneralController::hasPermissions($section, 2) == false) {
             return "invalid permissions"; //User is not allowed
@@ -94,7 +103,7 @@ class FileController extends Controller
 
         if($fileToUpload == null)
             return "invalid_file";
-        $ret = FileController::attachCourseFile($fileToUpload,$section);
+        $ret = FileController::attachCourseFile($fileToUpload,$section,$request->title,$request->description);
         return $ret ? "success" : "file_upload_failed";
     }
 
@@ -257,7 +266,7 @@ class FileController extends Controller
      * @internal param Assignment $assignment
      * @internal param User $user
      */
-    private static function attachCourseFile($file, Section $section) {
+    private static function attachCourseFile($file, Section $section,$title,$desc) {
         //Check that  file exists
         if($file == null || $section == null)
             return false;
@@ -268,6 +277,8 @@ class FileController extends Controller
         $courseContent = new CourseContent;
         $courseContent->file_id = $fileId;
         $courseContent->section_id = $section->id;
+        $courseContent->title = $title;
+        $courseContent->description = $desc;
         $courseContent->save();
         return true;
     }

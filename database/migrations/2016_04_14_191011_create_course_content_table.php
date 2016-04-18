@@ -14,6 +14,8 @@ class CreateCourseContentTable extends Migration
     {
         Schema::create('course_content', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('title');
+            $table->text('description');
 
             $table->integer('section_id')->unsigned();
             $table->foreign('section_id')->references('id')->on('sections')
