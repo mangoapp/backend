@@ -198,7 +198,7 @@ class PollController extends Controller
             return "invalid_permissions";
         }
 
-        return $section->polls;
+        return $this->attachPollStats($section->polls);
     }
 
     /**
@@ -213,7 +213,8 @@ class PollController extends Controller
             return "invalid_permissions";
         }
 
-        return $section->polls()->where('status',1)->get();
+        $pollResponses = $section->polls()->where('status',1)->get();
+        return $this->attachPollStats($pollResponses);
     }
 
     /**
@@ -234,5 +235,24 @@ class PollController extends Controller
         }
 
         return $poll->responses;
+    }
+
+    public function attachPollStats($polls) {
+        foreach($polls as $poll) {
+            $poll->total_responses = sizeof($poll->responses());
+            $poll->responses_A = sizeof($poll->responses()->where('answer', '1')->get());
+            $poll->responses_B = sizeof($poll->responses()->where('answer', '2')->get());
+            $poll->responses_C = sizeof($poll->responses()->where('answer', '3')->get());
+            $poll->responses_D = sizeof($poll->responses()->where('answer', '4')->get());
+            $poll->responses_E = sizeof($poll->responses()->where('answer', '5')->get());
+            $poll->responses_E = sizeof($poll->responses()->where('answer', '5')->get());
+            $responses = $poll->responses()->get();
+            $userArray = array();
+            foreach($responses as $response) {
+                array_push($userArray,$response->user);
+            }
+            $poll->users = $userArray;
+        }
+        return $polls;
     }
 }
