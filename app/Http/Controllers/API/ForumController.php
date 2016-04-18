@@ -35,7 +35,7 @@ class ForumController extends Controller {
 		return Course::with(
 		 	['threads' => function($query) {
 		 		$query->orderBy('created_at', 'asc');
-		 	},'threads.user']
+		 	},'threads.user.roles']
 		)->orderBy('created_at', 'asc')->find($section->course->id);
     }
     public function getPosts(Request $request) {
