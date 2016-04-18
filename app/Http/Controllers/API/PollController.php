@@ -194,7 +194,7 @@ class PollController extends Controller
     public function getAllPolls(Request $request) {
         //Check permissions
         $section = Section::find($request->section_id);
-        if(GeneralController::hasPermissions($section,2) == false) {
+        if(GeneralController::hasPermissions($section,1) == false) {
             return "invalid_permissions";
         }
 
@@ -209,7 +209,7 @@ class PollController extends Controller
     public function getActivePolls(Request $request) {
         //Check permissions
         $section = Section::find($request->section_id);
-        if(GeneralController::hasPermissions($section,2) == false) {
+        if(GeneralController::hasPermissions($section,1) == false) {
             return "invalid_permissions";
         }
 
