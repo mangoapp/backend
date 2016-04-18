@@ -52,7 +52,8 @@ class ForumController extends Controller {
 		 	['posts' => function($query) {
 		 		$query->orderBy('created_at', 'desc');
 		 	},'posts.user.roles', 'posts.likes']
-		)->with('user')->orderBy('created_at', 'asc')->find($request->thread_id)->toArray();
+		)->with('user.roles')->orderBy('created_at', 'asc')->find($request->thread_id)->toArray();
+
         foreach($arr['posts'] as $key => $post) {
             $p = Post::find($post['id']);
             $arr['posts'][$key]['totalLikes'] = $p->getLikes();
