@@ -80,6 +80,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
 
     //Assignment File Submission
     Route::post('assignments/{assignment_id}/upload','FileController@submitAssignmentFile');
+    Route::get('assignments/{assignment_id}/checkUpload','FileController@checkAssignmentFile');
     Route::get('assignments/{assignment_id}/uploads','FileController@getAssignmentFiles');
     Route::get('files/{file_id}','FileController@downloadAssignmentFile');
 

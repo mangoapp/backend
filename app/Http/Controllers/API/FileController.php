@@ -108,6 +108,33 @@ class FileController extends Controller
     }
 
     /**
+     * Checks if the user has uploaded a file
+     * @param Request $request
+     * @return string
+     */
+    public function checkAssignmentFile(Request $request) {
+        $assignment = Assignment::findOrFail($request->assignment_id);
+        $section = $assignment->section;
+        if(GeneralController::hasPermissions($section, 1) == false) {
+            return "invalid permissions"; //User is not in section
+        }
+
+        //Check assignment allows files
+        if(!$assignment->filesubmission) {
+            return "file submissions not allowed";
+        }
+
+        $existingFile = $assignment->files()->where('user_id',Auth::user()->id)->first();
+        if($existingFile == null) {
+            //No previous upload
+            return "no_file_submitted";
+        } else {
+            //User uploaded a file previously
+            return $existingFile;
+        }
+    }
+
+    /**
      * Deletes a previously uploaded course content file
      * @param Request $request
      * @return string
@@ -201,6 +228,9 @@ class FileController extends Controller
             return "invalid permissions"; //User is not in section
         }
         $submittedFiles = $assignment->files()->get();
+        foreach($submittedFiles as $file) {
+            $file->user = User::find($file->user_id);
+        }
         return $submittedFiles;
     }
 
