@@ -13,12 +13,14 @@ class UserTableSeeder extends Seeder
     public function run()
     {
         $data = array(
-            ['id' => 1, 'name' => 'CoolGuy17', 'firstname' => 'Buster', 'lastname' => 'Dunsmore', 'email' => 'buster@gmail.com',
+            ['id' => 1, 'name' => 'TeacherGuy123', 'firstname' => 'Teacher', 'lastname' => 'McTeacherson', 'email' => 'teacher@gmail.com',
                 'password' => Hash::make("password123"), "remember_token" => "", "uuid" => User::v4(), "created_at" => new DateTime(), "updated_at" => new DateTime()],
-            ['id' => 2, 'name' => 'LannisterGuy23', 'firstname' => 'Tyrion', 'lastname' => 'Lannister', 'email' => 'tyrion@gmail.com',
+            ['id' => 2, 'name' => 'SteveJobs15', 'firstname' => 'Steve', 'lastname' => 'Jobs', 'email' => 'steve@gmail.com',
                 'password' => Hash::make("password123"), "remember_token" => "", "uuid" => User::v4(), "created_at" => new DateTime(), "updated_at" => new DateTime()],
-            ['id' => 3, 'name' => 'ScrumMaster99', 'firstname' => 'Bill', 'lastname' => 'Gates', 'email' => 'bill@gmail.com',
-                'password' => Hash::make("password123"), "remember_token" => "", "uuid" => User::v4(), "created_at" => new DateTime(), "updated_at" => new DateTime()]
+            ['id' => 3, 'name' => 'BillGates27', 'firstname' => 'Bill', 'lastname' => 'Gates', 'email' => 'bill@gmail.com',
+                'password' => Hash::make("password123"), "remember_token" => "", "uuid" => User::v4(), "created_at" => new DateTime(), "updated_at" => new DateTime()],
+            ['id' => 4, 'name' => 'ScrumMaster12', 'firstname' => 'Alan', 'lastname' => 'Turing', 'email' => 'alan@gmail.com',
+                'password' => Hash::make("password123"), "remember_token" => "", "uuid" => User::v4(), "created_at" => new DateTime(), "updated_at" => new DateTime()],
         );
         DB::table('users')->insert($data);
     }
