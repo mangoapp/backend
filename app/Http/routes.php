@@ -126,7 +126,8 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('sections/events/create', 'EventsController@createEvent');
     Route::post('sections/events/update', 'EventsController@editEvent');
     Route::post('sections/events/delete', 'EventsController@deleteEvent');
-    Route::get('calendar/{uuid}', 'EventsController@generateCalendar');
+    Route::get('calendar/{uuid}', 'EventsController@generateCalendarByUser');
+    Route::get('calendar/section/{id}', 'EventsController@generateCalendarBySection');
 
     //Polls
     Route::post('sections/polls', 'PollController@createPoll');
