@@ -36,6 +36,7 @@ Route::group(['prefix' => 'v1','namespace'=>'API', 'middleware' => 'cors'], func
     Route::post('users', 'AuthController@signUp');
     Route::post('passwordResetRequest', 'UserController@requestPasswordReset');
     Route::post('passwordResetResponse', 'UserController@confirmPasswordReset');
+    Route::post('users/edit', 'UserController@updateUser');
 
     //Courses & Sections
     Route::get('allcourses', 'CourseController@showAll');

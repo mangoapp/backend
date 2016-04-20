@@ -5,6 +5,7 @@ use App\Models\PasswordReset;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Hash;
 use Illuminate\Http\Request;
 use Log;
 use Mail;
@@ -123,5 +124,38 @@ class UserController extends Controller {
             array_push($data,$sectionData);
         }
         return $data;
+    }
+
+    /**
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function updateUser(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'email'   => 'required|email|unique:users,id,'.Auth::user()->id,
+            'password'    => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+
+        $user = Auth::user();
+        if($user == null)
+            return "invalid_user";
+        //Update User
+        $user->firstname = $request->firstname;
+        $user->lastname = $request->lastname;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        $roles = Auth::user()->roles()->get()->lists('name');
+        $newToken = JWTAuth::fromUser($user,['exp' => strtotime('+1 year'),'roles'=>$roles, 'slug'=>$user->slug(), 'firstname' => $user->firstname, 'lastname' => $user->lastname, 'email' => $user->email, 'uuid' => $user->uuid]);
+
+        return ['token' => $newToken];
     }
 }
