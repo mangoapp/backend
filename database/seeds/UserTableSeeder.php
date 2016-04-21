@@ -21,6 +21,8 @@ class UserTableSeeder extends Seeder
                 'password' => Hash::make("password123"), "remember_token" => "", "uuid" => User::v4(), "created_at" => new DateTime(), "updated_at" => new DateTime()],
             ['id' => 4, 'name' => 'ScrumMaster12', 'firstname' => 'Alan', 'lastname' => 'Turing', 'email' => 'alan@gmail.com',
                 'password' => Hash::make("password123"), "remember_token" => "", "uuid" => User::v4(), "created_at" => new DateTime(), "updated_at" => new DateTime()],
+            ['id' => 5, 'name' => 'ShaneMan123', 'firstname' => 'Shane', 'lastname' => 'DeWael', 'email' => 'swdewael@gmail.com',
+                'password' => Hash::make("password123"), "remember_token" => "", "uuid" => User::v4(), "created_at" => new DateTime(), "updated_at" => new DateTime()],
         );
         DB::table('users')->insert($data);
     }
