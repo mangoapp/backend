@@ -36,6 +36,13 @@ class FileController extends Controller
      * @return string
      */
     public function submitAssignmentFile(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'file' => 'required|mimes:pdf,min:1'
+        ]);
+        if ($validator->fails()) {
+            return $validator->errors()->all();
+        }
+
         $assignment = Assignment::findOrFail($request->assignment_id);
         $section = $assignment->section;
         if(GeneralController::hasPermissions($section, 1) == false) {
@@ -80,6 +87,7 @@ class FileController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'description' => 'required',
+            'file' => 'required|mimes:pdf,min:1'
         ]);
 
         if ($validator->fails()) {
@@ -95,11 +103,6 @@ class FileController extends Controller
             return "no_file";
 
         $fileToUpload = $request->file('file');
-        //Check file type
-        $fileType = File::extension($fileToUpload->getClientOriginalName());
-        if($fileType != 'pdf') {
-            return "invalid_filetype";
-        }
 
         if($fileToUpload == null)
             return "invalid_file";
