@@ -236,6 +236,12 @@ class CourseController extends Controller
         //Make sure user was not already invited
         $invite = Invite::where('user_id',$user->id)->first();
         if($invite != null) {
+            //Already sent. Re-send email.
+            Mail::queue('emails.classinvite', ['user' => $user, 'inviteTtoken' => $invite->token, 'course' => $section->course], function ($message) use ($user) {
+                $message->from('noreply@mango.com');
+                $message->subject("Mango class invite!");
+                $message->to($user->email);
+            });
             return "success";
         }
 
