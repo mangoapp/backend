@@ -21,7 +21,7 @@ class EventsController extends Controller
     public function __construct()
     {
         //Require JWT token for all functions
-        $this->middleware("jwt.auth",['except' => ['generateCalendar']]);
+        $this->middleware("jwt.auth",['except' => ['generateCalendarByUser', 'generateCalendarBySection']]);
     }
 
     /**
