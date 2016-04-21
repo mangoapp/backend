@@ -5,8 +5,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
 class RoleUser extends Model {
-
-    use SoftDeletes;
 	protected $table = 'role_user';
 	public $timestamps = false;
     protected $dates = ['deleted_at'];
