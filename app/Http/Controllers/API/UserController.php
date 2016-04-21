@@ -41,6 +41,12 @@ class UserController extends Controller {
             //Make sure password reset has not been requested already
             $reset = PasswordReset::where('user_id',$user->id)->first();
             if($reset != null) {
+                //Re-send email with same token
+                Mail::queue('emails.passwordreset', ['resetToken' => $reset->token], function ($message) use ($user) {
+                    $message->from('noreply@mango.com');
+                    $message->subject("Mango password reset");
+                    $message->to($user->email);
+                });
                 return "success";
             }
             //Generate new password reset
@@ -51,7 +57,7 @@ class UserController extends Controller {
 
             Mail::queue('emails.passwordreset', ['resetToken' => $reset->token], function ($message) use ($user) {
                 $message->from('noreply@mango.com');
-                $message->subject("Welcome to Mango!");
+                $message->subject("Mango password reset");
                 $message->to($user->email);
             });
             Log::debug("Password Reset Token: ".$reset->token);

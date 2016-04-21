@@ -1,3 +1,3 @@
-Password reset token: {{$resetToken}}.
+Hi! Please use the link below to reset your Mango password:
 
-This needs to be fixed so there's a link the user can cick on.
+<a href="http://localhost:8888/#!/forgot-password/{{$resetToken}}">Reset Token</a>
