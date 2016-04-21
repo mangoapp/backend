@@ -249,7 +249,7 @@ class CourseController extends Controller
 
         Mail::queue('emails.classinvite', ['user' => $user, 'inviteTtoken' => $invite->token, 'course' => $section->course], function ($message) use ($user) {
             $message->from('noreply@mango.com');
-            $message->subject("Welcome to Mango!");
+            $message->subject("Mango class invite!");
             $message->to($user->email);
         });
         Log::debug("Class Invite Token: ".$invite->token);

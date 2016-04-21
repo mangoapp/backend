@@ -301,12 +301,14 @@ class FileController extends Controller
      */
     private static function attachCourseFile($file, Section $section,$title,$desc) {
         //Check that  file exists
-        if($file == null || $section == null)
+        if($file == null || $section == null || $title == null || $desc == null)
             return false;
 
         //Upload new file
         Log::debug("Uploaded course content file for section".$section->id);
         $fileId = FileController::uploadFile($file);
+        if($fileId  == null || $fileId == false)
+            return false;
         $courseContent = new CourseContent;
         $courseContent->file_id = $fileId;
         $courseContent->section_id = $section->id;

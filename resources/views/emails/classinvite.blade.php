@@ -1,8 +1,6 @@
 Hi {{$user->firstname}}! You have been invited to join a new course on Mango!
 
 
-Course Name: {{$course->name}}
-Invite Token: {{$inviteTtoken}}
+You can join the course `{{$course->name}}` by using the link below:
 
-
-This needs to be modifed to have a link instead.
+<a href="http://localhost:8888/#!/courses/{{$course->id}}/new/{{$inviteTtoken}}">Join Class</a>
