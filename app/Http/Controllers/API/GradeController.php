@@ -129,7 +129,7 @@ class GradeController extends Controller
      */
     public function updateGrade(Request $request) {
         $validator = Validator::make($request->all(), [
-            'score' => 'required|integer',
+            'score' => 'required',
             'user_id' => 'required|exists:categories,id',
         ]);
 
