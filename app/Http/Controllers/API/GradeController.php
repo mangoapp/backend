@@ -130,7 +130,7 @@ class GradeController extends Controller
     public function updateGrade(Request $request) {
         $validator = Validator::make($request->all(), [
             'score' => 'required|integer',
-            'grade_id' => 'required|exists:grades,id',
+            'user_id' => 'required|exists:categories,id',
         ]);
 
         if ($validator->fails()) {
@@ -144,12 +144,22 @@ class GradeController extends Controller
         }
 
         $section = $assignment->section;
+        //Check user recieving grade
+        $userToGrade = User::where('id',$request->user_id)->first();
+        if(GeneralController::userHasPermissions($userToGrade,$section, 1) == false) {
+            return "user_not_in_section";
+        }
+
         if(GeneralController::hasPermissions($section, 2) == false) {
             return "invalid permissions";
         }
-
         //Check that this grade doesn't already exist
-        $grade = Grade::where('id',$request->grade_id)->first();
+        $grade = Grade::where('user_id',$request->user_id)->where('assignment_id',$request->assignment_id)->first();
+        if($grade == null) {
+            //Create new grade
+            $grade = new Grade;
+            $grade->user_id = $request->user_id; //Cant change this once created
+        }
         $grade->score = $request->score;
         $grade->assignment_id = $request->assignment_id;
         $grade->section_id = $assignment->section->id;
