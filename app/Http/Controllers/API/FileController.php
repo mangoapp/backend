@@ -167,7 +167,7 @@ class FileController extends Controller
      * @return \Illuminate\Http\Response|string
      */
     public function downloadAssignmentFile(Request $request) {
-        $fileUpload = AssignmentFileUpload::where('id',$request->file_id)->first();
+        $fileUpload = AssignmentFileUpload::where('file_id',$request->file_id)->first();
 
         //Ensure that file exists
         if($fileUpload == null)
